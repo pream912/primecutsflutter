@@ -8,62 +8,74 @@ import 'package:flutter/material.dart';
 // Begin custom action code
 // DO NOT REMOVE OR MODIFY THE CODE ABOVE!
 
+import 'dart:developer';
+
 import 'dart:convert';
 
 Future<List<InventoryStruct>?> invRawToData(String? rawInv) async {
   // Add your function code here!
   List<InventoryStruct> invs = [];
-  dynamic data = rawInv;
-  List<dynamic> dataList = json.decode(data);
+  dynamic data = json.decode(rawInv!);
+  (data as Map).forEach((ke, va) {
+    if (ke == 'items') {
+      List<dynamic> dataList = va;
 
-  dataList.forEach((dat) {
-    String id = '';
-    String shop = '';
-    String uom = '';
-    late ProductStruct product;
-    double instock = 0;
-    //List<PackageStruct> package = [];
+      dataList.forEach((dat) {
+        String id = '';
+        String shop = '';
+        String uom = '';
+        late ProductStruct product;
+        double instock = 0;
+        List<PackageStruct> package = [];
 
-    (dat as Map).forEach((key, value) {
-      switch (key) {
-        case 'id':
-          {
-            id = value;
+        (dat as Map).forEach((key, value) {
+          switch (key) {
+            case 'id':
+              {
+                id = value;
+              }
+              break;
+            case 'shop':
+              {
+                shop = value;
+              }
+              break;
+            case 'uom':
+              {
+                uom = value;
+              }
+              break;
+            case 'instock':
+              {
+                instock = value;
+              }
+              break;
+            case 'packages':
+              {
+                for (var item in value) {
+                  log(item.toString());
+                  package.add(PackageStruct.fromMap(item));
+                }
+              }
+              break;
+            case 'expand':
+              {
+                dynamic pro = value;
+                (pro as Map).forEach((k, v) {
+                  product = ProductStruct.fromMap(v);
+                });
+              }
           }
-          break;
-        case 'shop':
-          {
-            shop = value;
-          }
-          break;
-        case 'uom':
-          {
-            uom = value;
-          }
-          break;
-        case 'instock':
-          {
-            instock = value;
-          }
-          break;
-        // case 'package':
-        //   {
-        //     for (var item in value) {
-        //       package.add(PackageStruct.fromMap(item));
-        //     }
-        //   }
-        //   break;
-        case 'expand':
-          {
-            dynamic pro = value;
-            (pro as Map).forEach((k, v) {
-              product = ProductStruct.fromMap(v);
-            });
-          }
-      }
-    });
-    invs.add(InventoryStruct(
-        id: id, shop: shop, uom: uom, instock: instock, product: product));
+        });
+        invs.add(InventoryStruct(
+            id: id,
+            shop: shop,
+            uom: uom,
+            instock: instock,
+            package: package,
+            product: product));
+      });
+    }
   });
   return invs;
 }

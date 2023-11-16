@@ -16,9 +16,9 @@ class ProductStruct extends BaseStruct {
     int? code,
     List<String>? tags,
     List<String>? related,
-    DateTime? created,
-    DateTime? updated,
     String? image,
+    String? created,
+    String? updated,
   })  : _id = id,
         _prodName = prodName,
         _description = description,
@@ -28,9 +28,9 @@ class ProductStruct extends BaseStruct {
         _code = code,
         _tags = tags,
         _related = related,
+        _image = image,
         _created = created,
-        _updated = updated,
-        _image = image;
+        _updated = updated;
 
   // "id" field.
   String? _id;
@@ -90,23 +90,23 @@ class ProductStruct extends BaseStruct {
       updateFn(_related ??= []);
   bool hasRelated() => _related != null;
 
-  // "created" field.
-  DateTime? _created;
-  DateTime? get created => _created;
-  set created(DateTime? val) => _created = val;
-  bool hasCreated() => _created != null;
-
-  // "updated" field.
-  DateTime? _updated;
-  DateTime? get updated => _updated;
-  set updated(DateTime? val) => _updated = val;
-  bool hasUpdated() => _updated != null;
-
   // "image" field.
   String? _image;
   String get image => _image ?? '';
   set image(String? val) => _image = val;
   bool hasImage() => _image != null;
+
+  // "created" field.
+  String? _created;
+  String get created => _created ?? '';
+  set created(String? val) => _created = val;
+  bool hasCreated() => _created != null;
+
+  // "updated" field.
+  String? _updated;
+  String get updated => _updated ?? '';
+  set updated(String? val) => _updated = val;
+  bool hasUpdated() => _updated != null;
 
   static ProductStruct fromMap(Map<String, dynamic> data) => ProductStruct(
         id: data['id'] as String?,
@@ -118,9 +118,9 @@ class ProductStruct extends BaseStruct {
         code: castToType<int>(data['code']),
         tags: getDataList(data['tags']),
         related: getDataList(data['related']),
-        created: data['created'] as DateTime?,
-        updated: data['updated'] as DateTime?,
         image: data['image'] as String?,
+        created: data['created'] as String?,
+        updated: data['updated'] as String?,
       );
 
   static ProductStruct? maybeFromMap(dynamic data) =>
@@ -136,9 +136,9 @@ class ProductStruct extends BaseStruct {
         'code': _code,
         'tags': _tags,
         'related': _related,
+        'image': _image,
         'created': _created,
         'updated': _updated,
-        'image': _image,
       }.withoutNulls;
 
   @override
@@ -181,16 +181,16 @@ class ProductStruct extends BaseStruct {
           ParamType.String,
           true,
         ),
+        'image': serializeParam(
+          _image,
+          ParamType.String,
+        ),
         'created': serializeParam(
           _created,
-          ParamType.DateTime,
+          ParamType.String,
         ),
         'updated': serializeParam(
           _updated,
-          ParamType.DateTime,
-        ),
-        'image': serializeParam(
-          _image,
           ParamType.String,
         ),
       }.withoutNulls;
@@ -242,18 +242,18 @@ class ProductStruct extends BaseStruct {
           ParamType.String,
           true,
         ),
+        image: deserializeParam(
+          data['image'],
+          ParamType.String,
+          false,
+        ),
         created: deserializeParam(
           data['created'],
-          ParamType.DateTime,
+          ParamType.String,
           false,
         ),
         updated: deserializeParam(
           data['updated'],
-          ParamType.DateTime,
-          false,
-        ),
-        image: deserializeParam(
-          data['image'],
           ParamType.String,
           false,
         ),
@@ -275,9 +275,9 @@ class ProductStruct extends BaseStruct {
         code == other.code &&
         listEquality.equals(tags, other.tags) &&
         listEquality.equals(related, other.related) &&
+        image == other.image &&
         created == other.created &&
-        updated == other.updated &&
-        image == other.image;
+        updated == other.updated;
   }
 
   @override
@@ -291,9 +291,9 @@ class ProductStruct extends BaseStruct {
         code,
         tags,
         related,
+        image,
         created,
-        updated,
-        image
+        updated
       ]);
 }
 
@@ -305,9 +305,9 @@ ProductStruct createProductStruct({
   String? category,
   String? subcategory,
   int? code,
-  DateTime? created,
-  DateTime? updated,
   String? image,
+  String? created,
+  String? updated,
 }) =>
     ProductStruct(
       id: id,
@@ -317,7 +317,7 @@ ProductStruct createProductStruct({
       category: category,
       subcategory: subcategory,
       code: code,
+      image: image,
       created: created,
       updated: updated,
-      image: image,
     );
