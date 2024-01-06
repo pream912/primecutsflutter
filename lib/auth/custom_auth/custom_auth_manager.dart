@@ -152,4 +152,4 @@ class CustomAuthManager {
 }
 
 PrimecutsAuthUser? currentUser;
-bool get loggedIn => currentUser != null;
+bool get loggedIn => currentUser?.loggedIn ?? false;

@@ -36,18 +36,34 @@ class _HomePageWidgetState extends State<HomePageWidget> {
     // On page load action.
     SchedulerBinding.instance.addPostFrameCallback((_) async {
       if (FFAppState().pin.pin > 0) {
-        _model.productsResult = await PocketbaseGroup.getProductsCall.call();
+        _model.productsResult = await PocketbaseGroup.getListingsCall.call(
+          shopId: FFAppState().shop.id,
+        );
         if ((_model.productsResult?.succeeded ?? true)) {
           setState(() {
-            FFAppState().inventory = [];
+            FFAppState().listings = [];
           });
-          _model.invOut = await actions.invRawToData(
+          _model.listingsOut = await actions.listRawToData(
             (_model.productsResult?.bodyText ?? ''),
           );
           setState(() {
-            FFAppState().inventory =
-                _model.invOut!.toList().cast<InventoryStruct>();
+            FFAppState().listings =
+                _model.listingsOut!.toList().cast<ListingsStruct>();
           });
+          _model.catResult = await PocketbaseGroup.getCategoriesCall.call();
+          if ((_model.catResult?.succeeded ?? true)) {
+            _model.catOutput = await actions.catJsonToData(
+              getJsonField(
+                (_model.catResult?.jsonBody ?? ''),
+                r'''$.items''',
+                true,
+              ),
+            );
+            setState(() {
+              FFAppState().categories =
+                  _model.catOutput!.toList().cast<CategoryStruct>();
+            });
+          }
         }
       } else {
         context.goNamed('LocationLoader');
@@ -93,7 +109,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
           title: Visibility(
             visible: FFAppState().pin.hasPin() == true,
             child: Align(
-              alignment: AlignmentDirectional(0.00, 0.00),
+              alignment: AlignmentDirectional(0.0, 0.0),
               child: Container(
                 width: double.infinity,
                 height: 100.0,
@@ -160,7 +176,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                         children: [
                           Padding(
                             padding: EdgeInsetsDirectional.fromSTEB(
-                                24.0, 0.0, 0.0, 0.0),
+                                16.0, 0.0, 0.0, 0.0),
                             child: Text(
                               FFAppState().pin.localities,
                               style: FlutterFlowTheme.of(context)
@@ -197,8 +213,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                     color: FlutterFlowTheme.of(context).platinum,
                   ),
                   child: Padding(
-                    padding:
-                        EdgeInsetsDirectional.fromSTEB(20.0, 20.0, 20.0, 20.0),
+                    padding: EdgeInsets.all(20.0),
                     child: Row(
                       mainAxisSize: MainAxisSize.max,
                       children: [
@@ -304,78 +319,91 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                       .secondaryBackground,
                                 ),
                                 child: Align(
-                                  alignment: AlignmentDirectional(0.00, 0.00),
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.max,
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Container(
-                                        width: double.infinity,
-                                        height: 400.0,
-                                        child: Stack(
-                                          children: [
-                                            Opacity(
-                                              opacity: 0.4,
-                                              child: ClipRRect(
-                                                borderRadius:
-                                                    BorderRadius.circular(8.0),
-                                                child: Image.asset(
-                                                  'assets/images/ccc-sn.webp',
-                                                  width: double.infinity,
-                                                  height: 400.0,
-                                                  fit: BoxFit.cover,
-                                                  alignment:
-                                                      Alignment(0.00, -1.00),
+                                  alignment: AlignmentDirectional(0.0, 0.0),
+                                  child: SingleChildScrollView(
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.max,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Container(
+                                          width: double.infinity,
+                                          height: 400.0,
+                                          child: Stack(
+                                            children: [
+                                              Opacity(
+                                                opacity: 0.6,
+                                                child: ClipRRect(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          8.0),
+                                                  child: Image.asset(
+                                                    'assets/images/ccc-sn.webp',
+                                                    width: double.infinity,
+                                                    height: 400.0,
+                                                    fit: BoxFit.cover,
+                                                    alignment:
+                                                        Alignment(0.0, -1.0),
+                                                  ),
                                                 ),
                                               ),
-                                            ),
-                                            Column(
-                                              mainAxisSize: MainAxisSize.max,
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              children: [
-                                                Padding(
-                                                  padding: EdgeInsetsDirectional
-                                                      .fromSTEB(20.0, 10.0,
-                                                          20.0, 0.0),
-                                                  child: Text(
-                                                    'Primecut\'s quality promise.',
-                                                    style: FlutterFlowTheme.of(
-                                                            context)
-                                                        .displayLarge
-                                                        .override(
-                                                          fontFamily: 'Outfit',
-                                                          fontSize: 54.0,
-                                                          fontWeight:
-                                                              FontWeight.w500,
-                                                          lineHeight: 1.0,
-                                                        ),
+                                              Column(
+                                                mainAxisSize: MainAxisSize.max,
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: [
+                                                  Padding(
+                                                    padding:
+                                                        EdgeInsetsDirectional
+                                                            .fromSTEB(
+                                                                20.0,
+                                                                10.0,
+                                                                20.0,
+                                                                0.0),
+                                                    child: Text(
+                                                      'Primecut\'s quality promise.',
+                                                      style: FlutterFlowTheme
+                                                              .of(context)
+                                                          .displayLarge
+                                                          .override(
+                                                            fontFamily:
+                                                                'Outfit',
+                                                            fontSize: 54.0,
+                                                            fontWeight:
+                                                                FontWeight.w500,
+                                                            lineHeight: 1.0,
+                                                          ),
+                                                    ),
                                                   ),
-                                                ),
-                                                Padding(
-                                                  padding: EdgeInsetsDirectional
-                                                      .fromSTEB(20.0, 10.0,
-                                                          20.0, 0.0),
-                                                  child: Text(
-                                                    'Elevate your culinary experience with our commitment to quality and timely delivery, ensuring every meal is a cut above the rest.',
-                                                    style: FlutterFlowTheme.of(
-                                                            context)
-                                                        .bodyMedium
-                                                        .override(
-                                                          fontFamily:
-                                                              'Readex Pro',
-                                                          fontSize: 18.0,
-                                                          fontWeight:
-                                                              FontWeight.w500,
-                                                        ),
+                                                  Padding(
+                                                    padding:
+                                                        EdgeInsetsDirectional
+                                                            .fromSTEB(
+                                                                20.0,
+                                                                10.0,
+                                                                20.0,
+                                                                0.0),
+                                                    child: Text(
+                                                      'Elevate your culinary experience with our commitment to quality and timely delivery, ensuring every meal is a cut above the rest.',
+                                                      style: FlutterFlowTheme
+                                                              .of(context)
+                                                          .bodyMedium
+                                                          .override(
+                                                            fontFamily:
+                                                                'Readex Pro',
+                                                            fontSize: 18.0,
+                                                            fontWeight:
+                                                                FontWeight.w500,
+                                                          ),
+                                                    ),
                                                   ),
-                                                ),
-                                              ],
-                                            ),
-                                          ],
+                                                ],
+                                              ),
+                                            ],
+                                          ),
                                         ),
-                                      ),
-                                    ],
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ),
@@ -397,7 +425,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                         child: Stack(
                                           children: [
                                             Opacity(
-                                              opacity: 0.4,
+                                              opacity: 0.6,
                                               child: ClipRRect(
                                                 borderRadius:
                                                     BorderRadius.circular(8.0),
@@ -410,7 +438,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                           4.0,
                                                   fit: BoxFit.cover,
                                                   alignment:
-                                                      Alignment(0.00, -1.00),
+                                                      Alignment(0.0, -1.0),
                                                 ),
                                               ),
                                             ),
@@ -440,7 +468,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                 Align(
                                                   alignment:
                                                       AlignmentDirectional(
-                                                          -1.00, -1.00),
+                                                          -1.0, -1.0),
                                                   child: Padding(
                                                     padding:
                                                         EdgeInsetsDirectional
@@ -491,7 +519,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                         child: Stack(
                                           children: [
                                             Opacity(
-                                              opacity: 0.4,
+                                              opacity: 0.6,
                                               child: ClipRRect(
                                                 borderRadius:
                                                     BorderRadius.circular(8.0),
@@ -501,7 +529,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                   height: 400.0,
                                                   fit: BoxFit.contain,
                                                   alignment:
-                                                      Alignment(0.00, -1.00),
+                                                      Alignment(0.0, -1.0),
                                                 ),
                                               ),
                                             ),
@@ -559,7 +587,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                           ),
                         ),
                         Align(
-                          alignment: AlignmentDirectional(-1.00, 1.00),
+                          alignment: AlignmentDirectional(-1.0, 1.0),
                           child: Padding(
                             padding: EdgeInsetsDirectional.fromSTEB(
                                 16.0, 0.0, 0.0, 16.0),
@@ -595,7 +623,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                 ),
                 Container(
                   width: double.infinity,
-                  height: 450.0,
+                  height: 470.0,
                   decoration: BoxDecoration(
                     color: FlutterFlowTheme.of(context).secondaryBackground,
                   ),
@@ -603,19 +631,13 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                     mainAxisSize: MainAxisSize.max,
                     children: [
                       Align(
-                        alignment: AlignmentDirectional(-1.00, 0.00),
+                        alignment: AlignmentDirectional(-1.0, 0.0),
                         child: Padding(
                           padding: EdgeInsetsDirectional.fromSTEB(
                               20.0, 10.0, 0.0, 0.0),
                           child: Text(
                             'Featured products',
-                            style: FlutterFlowTheme.of(context)
-                                .titleMedium
-                                .override(
-                                  fontFamily: 'Readex Pro',
-                                  color:
-                                      FlutterFlowTheme.of(context).smokyBlack,
-                                ),
+                            style: FlutterFlowTheme.of(context).titleLarge,
                           ),
                         ),
                       ),
@@ -625,7 +647,10 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                               20.0, 10.0, 20.0, 0.0),
                           child: Builder(
                             builder: (context) {
-                              final products = FFAppState().inventory.toList();
+                              final products = FFAppState()
+                                  .listings
+                                  .where((e) => e.featured)
+                                  .toList();
                               return ListView.builder(
                                 padding: EdgeInsets.zero,
                                 scrollDirection: Axis.horizontal,
@@ -663,8 +688,8 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                             ),
                                           ),
                                           Align(
-                                            alignment: AlignmentDirectional(
-                                                -1.00, 0.00),
+                                            alignment:
+                                                AlignmentDirectional(-1.0, 0.0),
                                             child: Padding(
                                               padding: EdgeInsetsDirectional
                                                   .fromSTEB(
@@ -702,32 +727,8 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                       .fromSTEB(
                                                           2.0, 0.0, 0.0, 0.0),
                                                   child: Text(
-                                                    productsItem
-                                                        .package.first.price
+                                                    productsItem.price
                                                         .toString(),
-                                                    style: FlutterFlowTheme.of(
-                                                            context)
-                                                        .bodyMedium,
-                                                  ),
-                                                ),
-                                                Padding(
-                                                  padding: EdgeInsetsDirectional
-                                                      .fromSTEB(
-                                                          2.0, 0.0, 0.0, 0.0),
-                                                  child: Text(
-                                                    '/',
-                                                    style: FlutterFlowTheme.of(
-                                                            context)
-                                                        .bodyMedium,
-                                                  ),
-                                                ),
-                                                Padding(
-                                                  padding: EdgeInsetsDirectional
-                                                      .fromSTEB(
-                                                          2.0, 0.0, 0.0, 0.0),
-                                                  child: Text(
-                                                    productsItem
-                                                        .package.first.uom,
                                                     style: FlutterFlowTheme.of(
                                                             context)
                                                         .bodyMedium,
@@ -736,9 +737,33 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                               ],
                                             ),
                                           ),
+                                          Opacity(
+                                            opacity: 0.9,
+                                            child: Align(
+                                              alignment: AlignmentDirectional(
+                                                  -1.0, 0.0),
+                                              child: Padding(
+                                                padding: EdgeInsetsDirectional
+                                                    .fromSTEB(
+                                                        8.0, 0.0, 0.0, 0.0),
+                                                child: Text(
+                                                  '${productsItem.quantity.toString()}${productsItem.uom}',
+                                                  style: FlutterFlowTheme.of(
+                                                          context)
+                                                      .bodyMedium
+                                                      .override(
+                                                        fontFamily:
+                                                            'Readex Pro',
+                                                        fontStyle:
+                                                            FontStyle.italic,
+                                                      ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
                                           Align(
-                                            alignment: AlignmentDirectional(
-                                                1.00, 1.00),
+                                            alignment:
+                                                AlignmentDirectional(1.0, 1.0),
                                             child: Padding(
                                               padding: EdgeInsetsDirectional
                                                   .fromSTEB(
@@ -783,6 +808,111 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                           25.0),
                                                 ),
                                               ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  );
+                                },
+                              );
+                            },
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  width: double.infinity,
+                  height: 400.0,
+                  decoration: BoxDecoration(
+                    color: FlutterFlowTheme.of(context).secondaryBackground,
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      Align(
+                        alignment: AlignmentDirectional(-1.0, -1.0),
+                        child: Padding(
+                          padding: EdgeInsetsDirectional.fromSTEB(
+                              20.0, 20.0, 0.0, 0.0),
+                          child: Text(
+                            'Shop by category',
+                            style: FlutterFlowTheme.of(context).titleLarge,
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: Padding(
+                          padding: EdgeInsetsDirectional.fromSTEB(
+                              20.0, 10.0, 20.0, 0.0),
+                          child: Builder(
+                            builder: (context) {
+                              final categories =
+                                  FFAppState().categories.toList();
+                              return GridView.builder(
+                                padding: EdgeInsets.zero,
+                                gridDelegate:
+                                    SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 3,
+                                  crossAxisSpacing: 0.0,
+                                  mainAxisSpacing: 20.0,
+                                  childAspectRatio: 0.9,
+                                ),
+                                scrollDirection: Axis.vertical,
+                                itemCount: categories.length,
+                                itemBuilder: (context, categoriesIndex) {
+                                  final categoriesItem =
+                                      categories[categoriesIndex];
+                                  return InkWell(
+                                    splashColor: Colors.transparent,
+                                    focusColor: Colors.transparent,
+                                    hoverColor: Colors.transparent,
+                                    highlightColor: Colors.transparent,
+                                    onTap: () async {
+                                      setState(() {
+                                        FFAppState().selectedProducts =
+                                            FFAppState()
+                                                .listings
+                                                .where((e) =>
+                                                    e.product.category ==
+                                                    categoriesItem.id)
+                                                .toList()
+                                                .cast<ListingsStruct>();
+                                      });
+
+                                      context.pushNamed('Products');
+                                    },
+                                    child: Container(
+                                      width: 100.0,
+                                      height: 150.0,
+                                      decoration: BoxDecoration(
+                                        color: FlutterFlowTheme.of(context)
+                                            .secondaryBackground,
+                                      ),
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.max,
+                                        children: [
+                                          ClipRRect(
+                                            borderRadius:
+                                                BorderRadius.circular(8.0),
+                                            child: Image.network(
+                                              'https://apis.avmediawork.in/api/files/categories/${categoriesItem.id}/${categoriesItem.cover}',
+                                              width: 100.0,
+                                              height: 100.0,
+                                              fit: BoxFit.cover,
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding:
+                                                EdgeInsetsDirectional.fromSTEB(
+                                                    0.0, 1.0, 0.0, 0.0),
+                                            child: Text(
+                                              categoriesItem.catName,
+                                              style:
+                                                  FlutterFlowTheme.of(context)
+                                                      .bodyMedium,
                                             ),
                                           ),
                                         ],

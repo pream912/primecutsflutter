@@ -5,3 +5,6 @@ export '/product_page/product_page_widget.dart' show ProductPageWidget;
 export '/no_shop/no_shop_widget.dart' show NoShopWidget;
 export '/location_loader/location_loader_widget.dart' show LocationLoaderWidget;
 export '/categories_page/categories_page_widget.dart' show CategoriesPageWidget;
+export '/products/products_widget.dart' show ProductsWidget;
+export '/account/account_widget.dart' show AccountWidget;
+export '/cart/cart_widget.dart' show CartWidget;

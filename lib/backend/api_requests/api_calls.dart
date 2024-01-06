@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:typed_data';
+import '../schema/structs/index.dart';
 
 import '/flutter_flow/flutter_flow_util.dart';
 import 'api_manager.dart';
@@ -22,6 +23,7 @@ class PocketbaseGroup {
   static SearchPinsCall searchPinsCall = SearchPinsCall();
   static GetShopCall getShopCall = GetShopCall();
   static GetProductsCall getProductsCall = GetProductsCall();
+  static GetListingsCall getListingsCall = GetListingsCall();
 }
 
 class SignupCall {
@@ -50,6 +52,7 @@ class SignupCall {
       encodeBodyUtf8: false,
       decodeUtf8: false,
       cache: false,
+      alwaysAllowBody: false,
     );
   }
 }
@@ -76,6 +79,7 @@ class SigninCall {
       encodeBodyUtf8: false,
       decodeUtf8: false,
       cache: false,
+      alwaysAllowBody: false,
     );
   }
 }
@@ -92,6 +96,7 @@ class GetCategoriesCall {
       encodeBodyUtf8: false,
       decodeUtf8: false,
       cache: false,
+      alwaysAllowBody: false,
     );
   }
 }
@@ -111,6 +116,7 @@ class GetProductByCategoryCall {
       encodeBodyUtf8: false,
       decodeUtf8: false,
       cache: false,
+      alwaysAllowBody: false,
     );
   }
 }
@@ -130,6 +136,7 @@ class GetProductCall {
       encodeBodyUtf8: false,
       decodeUtf8: false,
       cache: false,
+      alwaysAllowBody: false,
     );
   }
 }
@@ -149,6 +156,7 @@ class SearchPinsCall {
       encodeBodyUtf8: false,
       decodeUtf8: false,
       cache: false,
+      alwaysAllowBody: false,
     );
   }
 }
@@ -167,16 +175,19 @@ class GetShopCall {
       encodeBodyUtf8: false,
       decodeUtf8: false,
       cache: false,
+      alwaysAllowBody: false,
     );
   }
 }
 
 class GetProductsCall {
-  Future<ApiCallResponse> call() async {
+  Future<ApiCallResponse> call({
+    String? shopId = '',
+  }) async {
     return ApiManager.instance.makeApiCall(
       callName: 'GetProducts',
       apiUrl:
-          '${PocketbaseGroup.baseUrl}/collections/inventory/records?expand=product',
+          '${PocketbaseGroup.baseUrl}/collections/inventory/records?expand=product,packages(inv)&filter=(shop=\'${shopId}\')',
       callType: ApiCallType.GET,
       headers: {},
       params: {},
@@ -184,6 +195,27 @@ class GetProductsCall {
       encodeBodyUtf8: false,
       decodeUtf8: false,
       cache: false,
+      alwaysAllowBody: false,
+    );
+  }
+}
+
+class GetListingsCall {
+  Future<ApiCallResponse> call({
+    String? shopId = '',
+  }) async {
+    return ApiManager.instance.makeApiCall(
+      callName: 'GetListings',
+      apiUrl:
+          '${PocketbaseGroup.baseUrl}/collections/listings/records?expand=product,&filter=(shop=\'${shopId}\')',
+      callType: ApiCallType.GET,
+      headers: {},
+      params: {},
+      returnBody: true,
+      encodeBodyUtf8: false,
+      decodeUtf8: false,
+      cache: false,
+      alwaysAllowBody: false,
     );
   }
 }

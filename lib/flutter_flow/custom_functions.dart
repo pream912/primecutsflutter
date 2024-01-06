@@ -68,7 +68,7 @@ List<InventoryStruct>? processInventory(String? rawInv) {
         uom: uom,
         instock: instock,
         product: product,
-        package: package));
+        packages: package));
   });
   return invs;
 }

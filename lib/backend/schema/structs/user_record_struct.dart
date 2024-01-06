@@ -111,8 +111,9 @@ class UserRecordStruct extends BaseStruct {
         avatar: data['avatar'] as String?,
       );
 
-  static UserRecordStruct? maybeFromMap(dynamic data) =>
-      data is Map<String, dynamic> ? UserRecordStruct.fromMap(data) : null;
+  static UserRecordStruct? maybeFromMap(dynamic data) => data is Map
+      ? UserRecordStruct.fromMap(data.cast<String, dynamic>())
+      : null;
 
   Map<String, dynamic> toMap() => {
         'id': _id,

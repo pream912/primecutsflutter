@@ -50,15 +50,15 @@ class _GetLocationWidgetState extends State<GetLocationWidget> {
     context.watch<FFAppState>();
 
     return Align(
-      alignment: AlignmentDirectional(0.00, 0.00),
+      alignment: AlignmentDirectional(0.0, 0.0),
       child: Container(
         width: double.infinity,
         height: 100.0,
         decoration: BoxDecoration(
-          color: FlutterFlowTheme.of(context).secondaryBackground,
+          color: Color(0x35FFFFFF),
         ),
         child: Padding(
-          padding: EdgeInsetsDirectional.fromSTEB(5.0, 5.0, 5.0, 5.0),
+          padding: EdgeInsets.all(5.0),
           child: Row(
             mainAxisSize: MainAxisSize.max,
             children: [
@@ -119,23 +119,6 @@ class _GetLocationWidgetState extends State<GetLocationWidget> {
                     pin: _model.textController.text,
                   );
                   if ((_model.pinResult?.succeeded ?? true)) {
-                    await showDialog(
-                      context: context,
-                      builder: (alertDialogContext) {
-                        return AlertDialog(
-                          title: Text(
-                              (_model.pinResult?.statusCode ?? 200).toString()),
-                          content: Text((_model.pinResult?.bodyText ?? '')),
-                          actions: [
-                            TextButton(
-                              onPressed: () =>
-                                  Navigator.pop(alertDialogContext),
-                              child: Text('Ok'),
-                            ),
-                          ],
-                        );
-                      },
-                    );
                     if (getJsonField(
                           (_model.pinResult?.jsonBody ?? ''),
                           r'''$.items[0].pin''',
@@ -144,10 +127,10 @@ class _GetLocationWidgetState extends State<GetLocationWidget> {
                       context.goNamed('NoShop');
                     } else {
                       setState(() {
-                        FFAppState().pin = PinStruct.fromMap(getJsonField(
+                        FFAppState().pin = PinStruct.maybeFromMap(getJsonField(
                           (_model.pinResult?.jsonBody ?? ''),
                           r'''$.items[0]''',
-                        ));
+                        ))!;
                       });
                       _model.shopResult =
                           await PocketbaseGroup.getShopCall.call(
@@ -155,8 +138,8 @@ class _GetLocationWidgetState extends State<GetLocationWidget> {
                       );
                       if ((_model.shopResult?.succeeded ?? true)) {
                         setState(() {
-                          FFAppState().shop = ShopStruct.fromMap(
-                              (_model.shopResult?.jsonBody ?? ''));
+                          FFAppState().shop = ShopStruct.maybeFromMap(
+                              (_model.shopResult?.jsonBody ?? ''))!;
                         });
 
                         context.goNamed('HomePage');

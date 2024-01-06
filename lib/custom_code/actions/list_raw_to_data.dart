@@ -12,10 +12,10 @@ import 'dart:developer';
 
 import 'dart:convert';
 
-Future<List<InventoryStruct>?> invRawToData(String? rawInv) async {
+Future<List<ListingsStruct>?> listRawToData(String? rawList) async {
   // Add your function code here!
-  List<InventoryStruct> invs = [];
-  dynamic data = json.decode(rawInv!);
+  List<ListingsStruct> list = [];
+  dynamic data = json.decode(rawList!);
   (data as Map).forEach((ke, va) {
     if (ke == 'items') {
       List<dynamic> dataList = va;
@@ -24,9 +24,10 @@ Future<List<InventoryStruct>?> invRawToData(String? rawInv) async {
         String id = '';
         String shop = '';
         String uom = '';
+        double quantity = 0;
+        double price = 0;
+        bool featured = false;
         late ProductStruct product;
-        double instock = 0;
-        List<PackageStruct> package = [];
 
         (dat as Map).forEach((key, value) {
           switch (key) {
@@ -45,9 +46,19 @@ Future<List<InventoryStruct>?> invRawToData(String? rawInv) async {
                 uom = value;
               }
               break;
-            case 'instock':
+            case 'price':
               {
-                instock = value;
+                price = value;
+              }
+              break;
+            case 'quantity':
+              {
+                quantity = value;
+              }
+              break;
+            case 'featured':
+              {
+                featured = value;
               }
               break;
             // case 'packages':
@@ -62,12 +73,6 @@ Future<List<InventoryStruct>?> invRawToData(String? rawInv) async {
               {
                 dynamic pro = value;
                 (pro as Map).forEach((k, v) {
-                  if (k == 'packages(inv)') {
-                    for (var item in v) {
-                      log(item.toString());
-                      package.add(PackageStruct.fromMap(item));
-                    }
-                  }
                   if (k == 'product') {
                     product = ProductStruct.fromMap(v);
                   }
@@ -75,15 +80,16 @@ Future<List<InventoryStruct>?> invRawToData(String? rawInv) async {
               }
           }
         });
-        invs.add(InventoryStruct(
+        list.add(ListingsStruct(
             id: id,
             shop: shop,
             uom: uom,
-            instock: instock,
-            packages: package,
+            price: price,
+            quantity: quantity,
+            featured: featured,
             product: product));
       });
     }
   });
-  return invs;
+  return list;
 }

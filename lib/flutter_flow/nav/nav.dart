@@ -121,6 +121,24 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
           builder: (context, params) => params.isEmpty
               ? NavBarPage(initialPage: 'CategoriesPage')
               : CategoriesPageWidget(),
+        ),
+        FFRoute(
+          name: 'Products',
+          path: '/products',
+          builder: (context, params) => ProductsWidget(),
+        ),
+        FFRoute(
+          name: 'Account',
+          path: '/account',
+          builder: (context, params) => params.isEmpty
+              ? NavBarPage(initialPage: 'Account')
+              : AccountWidget(),
+        ),
+        FFRoute(
+          name: 'Cart',
+          path: '/cart',
+          builder: (context, params) =>
+              params.isEmpty ? NavBarPage(initialPage: 'Cart') : CartWidget(),
         )
       ].map((r) => r.toRoute(appStateNotifier)).toList(),
     );
@@ -317,13 +335,20 @@ class FFRoute {
                   key: state.pageKey,
                   child: child,
                   transitionDuration: transitionInfo.duration,
-                  transitionsBuilder: PageTransition(
+                  transitionsBuilder:
+                      (context, animation, secondaryAnimation, child) =>
+                          PageTransition(
                     type: transitionInfo.transitionType,
                     duration: transitionInfo.duration,
                     reverseDuration: transitionInfo.duration,
                     alignment: transitionInfo.alignment,
                     child: child,
-                  ).transitionsBuilder,
+                  ).buildTransitions(
+                    context,
+                    animation,
+                    secondaryAnimation,
+                    child,
+                  ),
                 )
               : MaterialPage(key: state.pageKey, child: child);
         },

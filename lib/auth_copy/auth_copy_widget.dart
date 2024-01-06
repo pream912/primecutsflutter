@@ -194,10 +194,9 @@ class _AuthCopyWidgetState extends State<AuthCopyWidget>
                 ),
               ),
               Align(
-                alignment: AlignmentDirectional(0.00, 0.00),
+                alignment: AlignmentDirectional(0.0, 0.0),
                 child: Padding(
-                  padding:
-                      EdgeInsetsDirectional.fromSTEB(12.0, 12.0, 12.0, 12.0),
+                  padding: EdgeInsets.all(12.0),
                   child: Container(
                     width: double.infinity,
                     height: MediaQuery.sizeOf(context).height * 0.7,
@@ -217,7 +216,7 @@ class _AuthCopyWidgetState extends State<AuthCopyWidget>
                               controller: _model.tabBarController,
                               children: [
                                 Align(
-                                  alignment: AlignmentDirectional(0.00, -1.00),
+                                  alignment: AlignmentDirectional(0.0, -1.0),
                                   child: Padding(
                                     padding: EdgeInsetsDirectional.fromSTEB(
                                         24.0, 16.0, 24.0, 0.0),
@@ -363,9 +362,7 @@ class _AuthCopyWidgetState extends State<AuthCopyWidget>
                                                               context)
                                                           .secondaryBackground,
                                                   contentPadding:
-                                                      EdgeInsetsDirectional
-                                                          .fromSTEB(24.0, 24.0,
-                                                              24.0, 24.0),
+                                                      EdgeInsets.all(24.0),
                                                 ),
                                                 style:
                                                     FlutterFlowTheme.of(context)
@@ -465,9 +462,7 @@ class _AuthCopyWidgetState extends State<AuthCopyWidget>
                                                               context)
                                                           .secondaryBackground,
                                                   contentPadding:
-                                                      EdgeInsetsDirectional
-                                                          .fromSTEB(24.0, 24.0,
-                                                              24.0, 24.0),
+                                                      EdgeInsets.all(24.0),
                                                 ),
                                                 style:
                                                     FlutterFlowTheme.of(context)
@@ -568,9 +563,7 @@ class _AuthCopyWidgetState extends State<AuthCopyWidget>
                                                               context)
                                                           .secondaryBackground,
                                                   contentPadding:
-                                                      EdgeInsetsDirectional
-                                                          .fromSTEB(24.0, 24.0,
-                                                              24.0, 24.0),
+                                                      EdgeInsets.all(24.0),
                                                   suffixIcon: InkWell(
                                                     onTap: () => setState(
                                                       () => _model
@@ -691,9 +684,7 @@ class _AuthCopyWidgetState extends State<AuthCopyWidget>
                                                               context)
                                                           .secondaryBackground,
                                                   contentPadding:
-                                                      EdgeInsetsDirectional
-                                                          .fromSTEB(24.0, 24.0,
-                                                              24.0, 24.0),
+                                                      EdgeInsets.all(24.0),
                                                   suffixIcon: InkWell(
                                                     onTap: () => setState(
                                                       () => _model
@@ -727,8 +718,8 @@ class _AuthCopyWidgetState extends State<AuthCopyWidget>
                                             ),
                                           ),
                                           Align(
-                                            alignment: AlignmentDirectional(
-                                                0.00, 0.00),
+                                            alignment:
+                                                AlignmentDirectional(0.0, 0.0),
                                             child: Padding(
                                               padding: EdgeInsetsDirectional
                                                   .fromSTEB(
@@ -772,31 +763,17 @@ class _AuthCopyWidgetState extends State<AuthCopyWidget>
                                                       GoRouter.of(context)
                                                           .prepareAuthEvent();
                                                       await authManager.signIn(
-                                                        authenticationToken: ((_model.siginIn2Result?.jsonBody ??
-                                                                            '') !=
-                                                                        null &&
-                                                                    (_model.siginIn2Result?.jsonBody ??
-                                                                            '') !=
-                                                                        ''
-                                                                ? UserStruct.fromMap((_model
+                                                        authenticationToken:
+                                                            UserStruct.maybeFromMap((_model
                                                                         .siginIn2Result
                                                                         ?.jsonBody ??
                                                                     ''))
-                                                                : null)
-                                                            ?.token,
-                                                        userData: (_model.siginIn2Result
-                                                                            ?.jsonBody ??
-                                                                        '') !=
-                                                                    null &&
-                                                                (_model.siginIn2Result
-                                                                            ?.jsonBody ??
-                                                                        '') !=
-                                                                    ''
-                                                            ? UserStruct.fromMap((_model
+                                                                ?.token,
+                                                        userData: UserStruct
+                                                            .maybeFromMap((_model
                                                                     .siginIn2Result
                                                                     ?.jsonBody ??
-                                                                ''))
-                                                            : null,
+                                                                '')),
                                                       );
                                                       _navigate = () =>
                                                           context.goNamedAuth(
@@ -871,7 +848,7 @@ class _AuthCopyWidgetState extends State<AuthCopyWidget>
                                   ),
                                 ),
                                 Align(
-                                  alignment: AlignmentDirectional(0.00, -1.00),
+                                  alignment: AlignmentDirectional(0.0, -1.0),
                                   child: Padding(
                                     padding: EdgeInsetsDirectional.fromSTEB(
                                         24.0, 16.0, 24.0, 0.0),
@@ -1124,8 +1101,8 @@ class _AuthCopyWidgetState extends State<AuthCopyWidget>
                                             ),
                                           ),
                                           Align(
-                                            alignment: AlignmentDirectional(
-                                                0.00, 0.00),
+                                            alignment:
+                                                AlignmentDirectional(0.0, 0.0),
                                             child: Padding(
                                               padding: EdgeInsetsDirectional
                                                   .fromSTEB(
@@ -1149,34 +1126,17 @@ class _AuthCopyWidgetState extends State<AuthCopyWidget>
                                                     GoRouter.of(context)
                                                         .prepareAuthEvent();
                                                     await authManager.signIn(
-                                                      authenticationToken: ((_model
-                                                                              .signInResult
-                                                                              ?.jsonBody ??
-                                                                          '') !=
-                                                                      null &&
-                                                                  (_model.signInResult
-                                                                              ?.jsonBody ??
-                                                                          '') !=
-                                                                      ''
-                                                              ? UserStruct.fromMap((_model
+                                                      authenticationToken: UserStruct
+                                                              .maybeFromMap((_model
                                                                       .signInResult
                                                                       ?.jsonBody ??
                                                                   ''))
-                                                              : null)
                                                           ?.token,
-                                                      userData: (_model.signInResult
-                                                                          ?.jsonBody ??
-                                                                      '') !=
-                                                                  null &&
-                                                              (_model.signInResult
-                                                                          ?.jsonBody ??
-                                                                      '') !=
-                                                                  ''
-                                                          ? UserStruct.fromMap(
-                                                              (_model.signInResult
-                                                                      ?.jsonBody ??
-                                                                  ''))
-                                                          : null,
+                                                      userData: UserStruct
+                                                          .maybeFromMap((_model
+                                                                  .signInResult
+                                                                  ?.jsonBody ??
+                                                              '')),
                                                     );
                                                   }
 
@@ -1268,6 +1228,9 @@ class _AuthCopyWidgetState extends State<AuthCopyWidget>
                                 ),
                               ],
                               controller: _model.tabBarController,
+                              onTap: (i) async {
+                                [() async {}, () async {}][i]();
+                              },
                             ),
                           ),
                         ],

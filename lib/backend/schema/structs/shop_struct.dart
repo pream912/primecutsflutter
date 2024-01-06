@@ -85,7 +85,7 @@ class ShopStruct extends BaseStruct {
       );
 
   static ShopStruct? maybeFromMap(dynamic data) =>
-      data is Map<String, dynamic> ? ShopStruct.fromMap(data) : null;
+      data is Map ? ShopStruct.fromMap(data.cast<String, dynamic>()) : null;
 
   Map<String, dynamic> toMap() => {
         'id': _id,

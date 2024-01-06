@@ -124,7 +124,7 @@ class ProductStruct extends BaseStruct {
       );
 
   static ProductStruct? maybeFromMap(dynamic data) =>
-      data is Map<String, dynamic> ? ProductStruct.fromMap(data) : null;
+      data is Map ? ProductStruct.fromMap(data.cast<String, dynamic>()) : null;
 
   Map<String, dynamic> toMap() => {
         'id': _id,

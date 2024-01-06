@@ -1,3 +1,4 @@
+import '/backend/schema/structs/index.dart';
 import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
@@ -74,7 +75,7 @@ class _CategoriesPageWidgetState extends State<CategoriesPageWidget> {
             },
           ),
           title: Text(
-            'Page Title',
+            'Shop by category',
             style: FlutterFlowTheme.of(context).headlineMedium.override(
                   fontFamily: 'Outfit',
                   color: Colors.white,
@@ -89,7 +90,80 @@ class _CategoriesPageWidgetState extends State<CategoriesPageWidget> {
           top: true,
           child: Column(
             mainAxisSize: MainAxisSize.max,
-            children: [],
+            children: [
+              Expanded(
+                child: Padding(
+                  padding:
+                      EdgeInsetsDirectional.fromSTEB(20.0, 20.0, 20.0, 0.0),
+                  child: Builder(
+                    builder: (context) {
+                      final categories = FFAppState().categories.toList();
+                      return GridView.builder(
+                        padding: EdgeInsets.zero,
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 3,
+                          mainAxisSpacing: 10.0,
+                          childAspectRatio: 0.9,
+                        ),
+                        scrollDirection: Axis.vertical,
+                        itemCount: categories.length,
+                        itemBuilder: (context, categoriesIndex) {
+                          final categoriesItem = categories[categoriesIndex];
+                          return InkWell(
+                            splashColor: Colors.transparent,
+                            focusColor: Colors.transparent,
+                            hoverColor: Colors.transparent,
+                            highlightColor: Colors.transparent,
+                            onTap: () async {
+                              setState(() {
+                                FFAppState().selectedProducts = FFAppState()
+                                    .listings
+                                    .where((e) =>
+                                        e.product.category == categoriesItem.id)
+                                    .toList()
+                                    .cast<ListingsStruct>();
+                              });
+
+                              context.pushNamed('Products');
+                            },
+                            child: Container(
+                              width: 100.0,
+                              height: 140.0,
+                              decoration: BoxDecoration(
+                                color: Color(0x00FFFFFF),
+                              ),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.max,
+                                children: [
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(15.0),
+                                    child: Image.network(
+                                      'https://apis.avmediawork.in/api/files/categories/${categoriesItem.id}/${categoriesItem.cover}',
+                                      width: 100.0,
+                                      height: 100.0,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsetsDirectional.fromSTEB(
+                                        0.0, 2.0, 0.0, 0.0),
+                                    child: Text(
+                                      categoriesItem.catName,
+                                      style: FlutterFlowTheme.of(context)
+                                          .bodyMedium,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      );
+                    },
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ),

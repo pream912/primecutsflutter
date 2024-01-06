@@ -94,7 +94,7 @@ class PinStruct extends BaseStruct {
       );
 
   static PinStruct? maybeFromMap(dynamic data) =>
-      data is Map<String, dynamic> ? PinStruct.fromMap(data) : null;
+      data is Map ? PinStruct.fromMap(data.cast<String, dynamic>()) : null;
 
   Map<String, dynamic> toMap() => {
         'collectionId': _collectionId,

@@ -19,10 +19,14 @@ class HomePageModel extends FlutterFlowModel<HomePageWidget> {
   ///  State fields for stateful widgets in this page.
 
   final unfocusNode = FocusNode();
-  // Stores action output result for [Backend Call - API (GetProducts)] action in HomePage widget.
+  // Stores action output result for [Backend Call - API (GetListings)] action in HomePage widget.
   ApiCallResponse? productsResult;
-  // Stores action output result for [Custom Action - invRawToData] action in HomePage widget.
-  List<InventoryStruct>? invOut;
+  // Stores action output result for [Custom Action - listRawToData] action in HomePage widget.
+  List<ListingsStruct>? listingsOut;
+  // Stores action output result for [Backend Call - API (GetCategories)] action in HomePage widget.
+  ApiCallResponse? catResult;
+  // Stores action output result for [Custom Action - catJsonToData] action in HomePage widget.
+  List<CategoryStruct>? catOutput;
   // State field(s) for TextField widget.
   FocusNode? textFieldFocusNode;
   TextEditingController? textController;

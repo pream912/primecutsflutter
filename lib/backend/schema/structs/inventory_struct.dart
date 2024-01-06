@@ -11,7 +11,7 @@ class InventoryStruct extends BaseStruct {
     String? uom,
     String? shop,
     double? instock,
-    List<PackageStruct>? package,
+    List<PackageStruct>? packages,
     ProductStruct? product,
     String? created,
     String? updated,
@@ -19,7 +19,7 @@ class InventoryStruct extends BaseStruct {
         _uom = uom,
         _shop = shop,
         _instock = instock,
-        _package = package,
+        _packages = packages,
         _product = product,
         _created = created,
         _updated = updated;
@@ -49,13 +49,13 @@ class InventoryStruct extends BaseStruct {
   void incrementInstock(double amount) => _instock = instock + amount;
   bool hasInstock() => _instock != null;
 
-  // "package" field.
-  List<PackageStruct>? _package;
-  List<PackageStruct> get package => _package ?? const [];
-  set package(List<PackageStruct>? val) => _package = val;
-  void updatePackage(Function(List<PackageStruct>) updateFn) =>
-      updateFn(_package ??= []);
-  bool hasPackage() => _package != null;
+  // "packages" field.
+  List<PackageStruct>? _packages;
+  List<PackageStruct> get packages => _packages ?? const [];
+  set packages(List<PackageStruct>? val) => _packages = val;
+  void updatePackages(Function(List<PackageStruct>) updateFn) =>
+      updateFn(_packages ??= []);
+  bool hasPackages() => _packages != null;
 
   // "product" field.
   ProductStruct? _product;
@@ -82,8 +82,8 @@ class InventoryStruct extends BaseStruct {
         uom: data['uom'] as String?,
         shop: data['shop'] as String?,
         instock: castToType<double>(data['instock']),
-        package: getStructList(
-          data['package'],
+        packages: getStructList(
+          data['packages'],
           PackageStruct.fromMap,
         ),
         product: ProductStruct.maybeFromMap(data['product']),
@@ -91,15 +91,16 @@ class InventoryStruct extends BaseStruct {
         updated: data['updated'] as String?,
       );
 
-  static InventoryStruct? maybeFromMap(dynamic data) =>
-      data is Map<String, dynamic> ? InventoryStruct.fromMap(data) : null;
+  static InventoryStruct? maybeFromMap(dynamic data) => data is Map
+      ? InventoryStruct.fromMap(data.cast<String, dynamic>())
+      : null;
 
   Map<String, dynamic> toMap() => {
         'id': _id,
         'uom': _uom,
         'shop': _shop,
         'instock': _instock,
-        'package': _package?.map((e) => e.toMap()).toList(),
+        'packages': _packages?.map((e) => e.toMap()).toList(),
         'product': _product?.toMap(),
         'created': _created,
         'updated': _updated,
@@ -123,8 +124,8 @@ class InventoryStruct extends BaseStruct {
           _instock,
           ParamType.double,
         ),
-        'package': serializeParam(
-          _package,
+        'packages': serializeParam(
+          _packages,
           ParamType.DataStruct,
           true,
         ),
@@ -164,8 +165,8 @@ class InventoryStruct extends BaseStruct {
           ParamType.double,
           false,
         ),
-        package: deserializeStructParam<PackageStruct>(
-          data['package'],
+        packages: deserializeStructParam<PackageStruct>(
+          data['packages'],
           ParamType.DataStruct,
           true,
           structBuilder: PackageStruct.fromSerializableMap,
@@ -199,7 +200,7 @@ class InventoryStruct extends BaseStruct {
         uom == other.uom &&
         shop == other.shop &&
         instock == other.instock &&
-        listEquality.equals(package, other.package) &&
+        listEquality.equals(packages, other.packages) &&
         product == other.product &&
         created == other.created &&
         updated == other.updated;
@@ -207,7 +208,7 @@ class InventoryStruct extends BaseStruct {
 
   @override
   int get hashCode => const ListEquality()
-      .hash([id, uom, shop, instock, package, product, created, updated]);
+      .hash([id, uom, shop, instock, packages, product, created, updated]);
 }
 
 InventoryStruct createInventoryStruct({

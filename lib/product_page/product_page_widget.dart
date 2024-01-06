@@ -1,11 +1,11 @@
+import '/backend/schema/structs/index.dart';
+import '/components/cart_component_widget.dart';
 import '/flutter_flow/flutter_flow_animations.dart';
 import '/flutter_flow/flutter_flow_count_controller.dart';
-import '/flutter_flow/flutter_flow_drop_down.dart';
 import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
-import '/flutter_flow/form_field_controller.dart';
 import 'package:badges/badges.dart' as badges;
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -45,25 +45,6 @@ class _ProductPageWidgetState extends State<ProductPageWidget>
           delay: 0.ms,
           duration: 600.ms,
           begin: Offset(0.0, 60.0),
-          end: Offset(0.0, 0.0),
-        ),
-      ],
-    ),
-    'rowOnPageLoadAnimation': AnimationInfo(
-      trigger: AnimationTrigger.onPageLoad,
-      effects: [
-        FadeEffect(
-          curve: Curves.easeInOut,
-          delay: 0.ms,
-          duration: 600.ms,
-          begin: 0.0,
-          end: 1.0,
-        ),
-        MoveEffect(
-          curve: Curves.easeInOut,
-          delay: 0.ms,
-          duration: 600.ms,
-          begin: Offset(0.0, 80.0),
           end: Offset(0.0, 0.0),
         ),
       ],
@@ -145,7 +126,7 @@ class _ProductPageWidgetState extends State<ProductPageWidget>
           ),
         ),
         title: Text(
-          ' ',
+          FFAppState().selectedProduct.product.prodName,
           style: FlutterFlowTheme.of(context).titleSmall.override(
                 fontFamily: 'Lexend Deca',
                 color: Color(0xFF151B1E),
@@ -158,7 +139,7 @@ class _ProductPageWidgetState extends State<ProductPageWidget>
             padding: EdgeInsetsDirectional.fromSTEB(0.0, 8.0, 24.0, 0.0),
             child: badges.Badge(
               badgeContent: Text(
-                '3',
+                FFAppState().cart.length.toString(),
                 style: FlutterFlowTheme.of(context).bodyMedium.override(
                       fontFamily: 'Readex Pro',
                       color: Colors.white,
@@ -168,22 +149,38 @@ class _ProductPageWidgetState extends State<ProductPageWidget>
               shape: badges.BadgeShape.circle,
               badgeColor: FlutterFlowTheme.of(context).primary,
               elevation: 4.0,
-              padding: EdgeInsetsDirectional.fromSTEB(8.0, 8.0, 8.0, 8.0),
+              padding: EdgeInsets.all(8.0),
               position: badges.BadgePosition.topEnd(),
               animationType: badges.BadgeAnimationType.scale,
               toAnimate: true,
-              child: FlutterFlowIconButton(
-                borderColor: Colors.transparent,
-                borderRadius: 30.0,
-                buttonSize: 48.0,
-                icon: Icon(
-                  Icons.shopping_cart_outlined,
-                  color: FlutterFlowTheme.of(context).secondaryText,
-                  size: 30.0,
+              child: Builder(
+                builder: (context) => FlutterFlowIconButton(
+                  borderColor: Colors.transparent,
+                  borderRadius: 30.0,
+                  buttonSize: 48.0,
+                  icon: Icon(
+                    Icons.shopping_cart_outlined,
+                    color: FlutterFlowTheme.of(context).secondaryText,
+                    size: 30.0,
+                  ),
+                  onPressed: () async {
+                    await showDialog(
+                      context: context,
+                      builder: (dialogContext) {
+                        return Dialog(
+                          insetPadding: EdgeInsets.zero,
+                          backgroundColor: Colors.transparent,
+                          alignment: AlignmentDirectional(0.0, 0.0)
+                              .resolve(Directionality.of(context)),
+                          child: Container(
+                            width: double.infinity,
+                            child: CartComponentWidget(),
+                          ),
+                        );
+                      },
+                    ).then((value) => setState(() {}));
+                  },
                 ),
-                onPressed: () {
-                  print('IconButton pressed ...');
-                },
               ),
             ),
           ),
@@ -202,14 +199,15 @@ class _ProductPageWidgetState extends State<ProductPageWidget>
                 children: [
                   Padding(
                     padding:
-                        EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 16.0),
+                        EdgeInsetsDirectional.fromSTEB(10.0, 10.0, 10.0, 16.0),
                     child: Hero(
-                      tag: 'mainImage',
+                      tag:
+                          'https://apis.avmediawork.in/api/files/products/${FFAppState().selectedProduct.product.id}/${FFAppState().selectedProduct.product.image}',
                       transitionOnUserGestures: true,
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(0.0),
                         child: Image.network(
-                          'https://images.unsplash.com/photo-1566958769312-82cef41d19ef?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8NzF8fHByb2R1Y3RzfGVufDB8fDB8fA%3D%3D&auto=format&fit=crop&w=900&q=60',
+                          'https://apis.avmediawork.in/api/files/products/${FFAppState().selectedProduct.product.id}/${FFAppState().selectedProduct.product.image}',
                           width: double.infinity,
                           height: 430.0,
                           fit: BoxFit.cover,
@@ -221,7 +219,7 @@ class _ProductPageWidgetState extends State<ProductPageWidget>
                     padding:
                         EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 0.0, 0.0),
                     child: Text(
-                      'Beauty Products',
+                      FFAppState().selectedProduct.product.prodName,
                       style: FlutterFlowTheme.of(context).headlineSmall,
                     ),
                   ),
@@ -229,65 +227,37 @@ class _ProductPageWidgetState extends State<ProductPageWidget>
                     padding:
                         EdgeInsetsDirectional.fromSTEB(16.0, 12.0, 16.0, 16.0),
                     child: Text(
-                      'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do.',
+                      FFAppState().selectedProduct.product.description,
                       style: FlutterFlowTheme.of(context).labelMedium,
                     ).animateOnPageLoad(
                         animationsMap['textOnPageLoadAnimation']!),
                   ),
                   Padding(
                     padding:
-                        EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 40.0),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.max,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          '\$50.00',
-                          textAlign: TextAlign.start,
-                          style: FlutterFlowTheme.of(context).headlineSmall,
-                        ),
-                        Container(
-                          width: 130.0,
-                          height: 50.0,
-                          decoration: BoxDecoration(
-                            color: FlutterFlowTheme.of(context)
-                                .secondaryBackground,
-                            borderRadius: BorderRadius.circular(12.0),
-                            shape: BoxShape.rectangle,
-                            border: Border.all(
-                              color: FlutterFlowTheme.of(context).alternate,
-                              width: 2.0,
-                            ),
+                        EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 0.0, 0.0),
+                    child: Text(
+                      '₹${FFAppState().selectedProduct.price.toString()}',
+                      style: FlutterFlowTheme.of(context).bodyMedium.override(
+                            fontFamily: 'Readex Pro',
+                            fontSize: 18.0,
+                            fontWeight: FontWeight.w600,
                           ),
-                          child: FlutterFlowCountController(
-                            decrementIconBuilder: (enabled) => Icon(
-                              Icons.remove_rounded,
-                              color: enabled
-                                  ? FlutterFlowTheme.of(context).secondaryText
-                                  : FlutterFlowTheme.of(context).secondaryText,
-                              size: 16.0,
+                    ),
+                  ),
+                  Opacity(
+                    opacity: 0.9,
+                    child: Padding(
+                      padding:
+                          EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 0.0, 0.0),
+                      child: Text(
+                        '${FFAppState().selectedProduct.quantity.toString()}${FFAppState().selectedProduct.uom}',
+                        style: FlutterFlowTheme.of(context).bodyMedium.override(
+                              fontFamily: 'Readex Pro',
+                              fontSize: 16.0,
+                              fontStyle: FontStyle.italic,
                             ),
-                            incrementIconBuilder: (enabled) => Icon(
-                              Icons.add_rounded,
-                              color: enabled
-                                  ? FlutterFlowTheme.of(context).primary
-                                  : FlutterFlowTheme.of(context).secondaryText,
-                              size: 16.0,
-                            ),
-                            countBuilder: (count) => Text(
-                              count.toString(),
-                              style: FlutterFlowTheme.of(context).headlineSmall,
-                            ),
-                            count: _model.countControllerValue ??= 1,
-                            updateCount: (count) => setState(
-                                () => _model.countControllerValue = count),
-                            stepSize: 1,
-                            minimum: 1,
-                          ),
-                        ),
-                      ],
-                    ).animateOnPageLoad(
-                        animationsMap['rowOnPageLoadAnimation']!),
+                      ),
+                    ),
                   ),
                 ],
               ),
@@ -314,48 +284,57 @@ class _ProductPageWidgetState extends State<ProductPageWidget>
                 borderRadius: BorderRadius.circular(0.0),
               ),
               child: Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 34.0),
+                padding: EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 0.0),
                 child: Row(
                   mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    Expanded(
-                      child: Padding(
-                        padding:
-                            EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 12.0, 0.0),
-                        child: FlutterFlowDropDown<String>(
-                          controller: _model.dropDownValueController ??=
-                              FormFieldController<String>(null),
-                          options: ['Small', 'Medium', 'Large'],
-                          onChanged: (val) =>
-                              setState(() => _model.dropDownValue = val),
-                          width: 130.0,
-                          height: 50.0,
-                          textStyle: FlutterFlowTheme.of(context).bodyMedium,
-                          hintText: 'Select a Size',
-                          icon: Icon(
-                            Icons.arrow_drop_down_rounded,
-                            color: Color(0xFF95A1AC),
-                            size: 15.0,
-                          ),
-                          fillColor:
-                              FlutterFlowTheme.of(context).secondaryBackground,
-                          elevation: 2.0,
-                          borderColor:
-                              FlutterFlowTheme.of(context).secondaryBackground,
-                          borderWidth: 2.0,
-                          borderRadius: 12.0,
-                          margin: EdgeInsetsDirectional.fromSTEB(
-                              24.0, 4.0, 8.0, 4.0),
-                          hidesUnderline: true,
-                          isSearchable: false,
-                          isMultiSelect: false,
+                    Container(
+                      width: 130.0,
+                      height: 50.0,
+                      decoration: BoxDecoration(
+                        color: FlutterFlowTheme.of(context).secondaryBackground,
+                        borderRadius: BorderRadius.circular(12.0),
+                        shape: BoxShape.rectangle,
+                        border: Border.all(
+                          color: FlutterFlowTheme.of(context).alternate,
+                          width: 2.0,
                         ),
+                      ),
+                      child: FlutterFlowCountController(
+                        decrementIconBuilder: (enabled) => Icon(
+                          Icons.remove_rounded,
+                          color: enabled
+                              ? FlutterFlowTheme.of(context).secondaryText
+                              : FlutterFlowTheme.of(context).secondaryText,
+                          size: 16.0,
+                        ),
+                        incrementIconBuilder: (enabled) => Icon(
+                          Icons.add_rounded,
+                          color: enabled
+                              ? FlutterFlowTheme.of(context).primary
+                              : FlutterFlowTheme.of(context).secondaryText,
+                          size: 16.0,
+                        ),
+                        countBuilder: (count) => Text(
+                          count.toString(),
+                          style: FlutterFlowTheme.of(context).headlineSmall,
+                        ),
+                        count: _model.countControllerValue ??= 1,
+                        updateCount: (count) =>
+                            setState(() => _model.countControllerValue = count),
+                        stepSize: 1,
+                        minimum: 1,
                       ),
                     ),
                     FFButtonWidget(
-                      onPressed: () {
-                        print('Button pressed ...');
+                      onPressed: () async {
+                        setState(() {
+                          FFAppState().addToCart(CartStruct(
+                            quantity: _model.countControllerValue,
+                            item: FFAppState().selectedProduct,
+                          ));
+                        });
                       },
                       text: 'Add to Cart',
                       options: FFButtonOptions(

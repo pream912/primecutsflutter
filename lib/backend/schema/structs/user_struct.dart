@@ -32,7 +32,7 @@ class UserStruct extends BaseStruct {
       );
 
   static UserStruct? maybeFromMap(dynamic data) =>
-      data is Map<String, dynamic> ? UserStruct.fromMap(data) : null;
+      data is Map ? UserStruct.fromMap(data.cast<String, dynamic>()) : null;
 
   Map<String, dynamic> toMap() => {
         'token': _token,

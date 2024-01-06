@@ -10,13 +10,11 @@ class PackageStruct extends BaseStruct {
     String? display,
     String? uom,
     double? price,
-    double? quantity,
-    int? discount,
+    String? id,
   })  : _display = display,
         _uom = uom,
         _price = price,
-        _quantity = quantity,
-        _discount = discount;
+        _id = id;
 
   // "display" field.
   String? _display;
@@ -37,37 +35,27 @@ class PackageStruct extends BaseStruct {
   void incrementPrice(double amount) => _price = price + amount;
   bool hasPrice() => _price != null;
 
-  // "quantity" field.
-  double? _quantity;
-  double get quantity => _quantity ?? 0.0;
-  set quantity(double? val) => _quantity = val;
-  void incrementQuantity(double amount) => _quantity = quantity + amount;
-  bool hasQuantity() => _quantity != null;
-
-  // "discount" field.
-  int? _discount;
-  int get discount => _discount ?? 0;
-  set discount(int? val) => _discount = val;
-  void incrementDiscount(int amount) => _discount = discount + amount;
-  bool hasDiscount() => _discount != null;
+  // "id" field.
+  String? _id;
+  String get id => _id ?? '';
+  set id(String? val) => _id = val;
+  bool hasId() => _id != null;
 
   static PackageStruct fromMap(Map<String, dynamic> data) => PackageStruct(
         display: data['display'] as String?,
         uom: data['uom'] as String?,
         price: castToType<double>(data['price']),
-        quantity: castToType<double>(data['quantity']),
-        discount: castToType<int>(data['discount']),
+        id: data['id'] as String?,
       );
 
   static PackageStruct? maybeFromMap(dynamic data) =>
-      data is Map<String, dynamic> ? PackageStruct.fromMap(data) : null;
+      data is Map ? PackageStruct.fromMap(data.cast<String, dynamic>()) : null;
 
   Map<String, dynamic> toMap() => {
         'display': _display,
         'uom': _uom,
         'price': _price,
-        'quantity': _quantity,
-        'discount': _discount,
+        'id': _id,
       }.withoutNulls;
 
   @override
@@ -84,13 +72,9 @@ class PackageStruct extends BaseStruct {
           _price,
           ParamType.double,
         ),
-        'quantity': serializeParam(
-          _quantity,
-          ParamType.double,
-        ),
-        'discount': serializeParam(
-          _discount,
-          ParamType.int,
+        'id': serializeParam(
+          _id,
+          ParamType.String,
         ),
       }.withoutNulls;
 
@@ -111,14 +95,9 @@ class PackageStruct extends BaseStruct {
           ParamType.double,
           false,
         ),
-        quantity: deserializeParam(
-          data['quantity'],
-          ParamType.double,
-          false,
-        ),
-        discount: deserializeParam(
-          data['discount'],
-          ParamType.int,
+        id: deserializeParam(
+          data['id'],
+          ParamType.String,
           false,
         ),
       );
@@ -132,26 +111,22 @@ class PackageStruct extends BaseStruct {
         display == other.display &&
         uom == other.uom &&
         price == other.price &&
-        quantity == other.quantity &&
-        discount == other.discount;
+        id == other.id;
   }
 
   @override
-  int get hashCode =>
-      const ListEquality().hash([display, uom, price, quantity, discount]);
+  int get hashCode => const ListEquality().hash([display, uom, price, id]);
 }
 
 PackageStruct createPackageStruct({
   String? display,
   String? uom,
   double? price,
-  double? quantity,
-  int? discount,
+  String? id,
 }) =>
     PackageStruct(
       display: display,
       uom: uom,
       price: price,
-      quantity: quantity,
-      discount: discount,
+      id: id,
     );
