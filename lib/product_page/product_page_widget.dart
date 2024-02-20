@@ -1,11 +1,11 @@
 import '/backend/schema/structs/index.dart';
-import '/components/cart_component_widget.dart';
 import '/flutter_flow/flutter_flow_animations.dart';
 import '/flutter_flow/flutter_flow_count_controller.dart';
 import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
+import '/custom_code/actions/index.dart' as actions;
 import 'package:badges/badges.dart' as badges;
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -17,10 +17,10 @@ import 'product_page_model.dart';
 export 'product_page_model.dart';
 
 class ProductPageWidget extends StatefulWidget {
-  const ProductPageWidget({Key? key}) : super(key: key);
+  const ProductPageWidget({super.key});
 
   @override
-  _ProductPageWidgetState createState() => _ProductPageWidgetState();
+  State<ProductPageWidget> createState() => _ProductPageWidgetState();
 }
 
 class _ProductPageWidgetState extends State<ProductPageWidget>
@@ -74,6 +74,39 @@ class _ProductPageWidgetState extends State<ProductPageWidget>
   void initState() {
     super.initState();
     _model = createModel(context, () => ProductPageModel());
+
+    // On page load action.
+    SchedulerBinding.instance.addPostFrameCallback((_) async {
+      if (FFAppState()
+              .cart
+              .where((e) => e.item.id == FFAppState().selectedProduct.id)
+              .toList()
+              .first
+              .item
+              .id ==
+          FFAppState().selectedProduct.id) {
+        setState(() {
+          _model.cartQuant = FFAppState()
+              .cart
+              .where((e) => e.item.id == FFAppState().selectedProduct.id)
+              .toList()
+              .first
+              .quantity;
+        });
+        setState(() {
+          _model.countControllerValue = FFAppState()
+              .cart
+              .where((e) => e.item.id == FFAppState().selectedProduct.id)
+              .toList()
+              .first
+              .quantity;
+        });
+      } else {
+        setState(() {
+          _model.cartQuant = 0;
+        });
+      }
+    });
 
     setupAnimations(
       animationsMap.values.where((anim) =>
@@ -153,34 +186,18 @@ class _ProductPageWidgetState extends State<ProductPageWidget>
               position: badges.BadgePosition.topEnd(),
               animationType: badges.BadgeAnimationType.scale,
               toAnimate: true,
-              child: Builder(
-                builder: (context) => FlutterFlowIconButton(
-                  borderColor: Colors.transparent,
-                  borderRadius: 30.0,
-                  buttonSize: 48.0,
-                  icon: Icon(
-                    Icons.shopping_cart_outlined,
-                    color: FlutterFlowTheme.of(context).secondaryText,
-                    size: 30.0,
-                  ),
-                  onPressed: () async {
-                    await showDialog(
-                      context: context,
-                      builder: (dialogContext) {
-                        return Dialog(
-                          insetPadding: EdgeInsets.zero,
-                          backgroundColor: Colors.transparent,
-                          alignment: AlignmentDirectional(0.0, 0.0)
-                              .resolve(Directionality.of(context)),
-                          child: Container(
-                            width: double.infinity,
-                            child: CartComponentWidget(),
-                          ),
-                        );
-                      },
-                    ).then((value) => setState(() {}));
-                  },
+              child: FlutterFlowIconButton(
+                borderColor: Colors.transparent,
+                borderRadius: 30.0,
+                buttonSize: 48.0,
+                icon: Icon(
+                  Icons.shopping_cart_outlined,
+                  color: FlutterFlowTheme.of(context).secondaryText,
+                  size: 30.0,
                 ),
+                onPressed: () async {
+                  context.pushNamed('Cart');
+                },
               ),
             ),
           ),
@@ -271,7 +288,7 @@ class _ProductPageWidgetState extends State<ProductPageWidget>
             ),
             child: Container(
               width: double.infinity,
-              height: 100.0,
+              height: 70.0,
               decoration: BoxDecoration(
                 color: FlutterFlowTheme.of(context).primaryBackground,
                 boxShadow: [
@@ -287,76 +304,163 @@ class _ProductPageWidgetState extends State<ProductPageWidget>
                 padding: EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 0.0),
                 child: Row(
                   mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Container(
-                      width: 130.0,
-                      height: 50.0,
-                      decoration: BoxDecoration(
-                        color: FlutterFlowTheme.of(context).secondaryBackground,
-                        borderRadius: BorderRadius.circular(12.0),
-                        shape: BoxShape.rectangle,
-                        border: Border.all(
-                          color: FlutterFlowTheme.of(context).alternate,
-                          width: 2.0,
+                    if (_model.cartQuant > 0)
+                      Expanded(
+                        child: Padding(
+                          padding: EdgeInsets.all(5.0),
+                          child: Container(
+                            width: 130.0,
+                            height: 50.0,
+                            decoration: BoxDecoration(
+                              color: FlutterFlowTheme.of(context)
+                                  .secondaryBackground,
+                              borderRadius: BorderRadius.circular(12.0),
+                              shape: BoxShape.rectangle,
+                              border: Border.all(
+                                color: FlutterFlowTheme.of(context).alternate,
+                                width: 2.0,
+                              ),
+                            ),
+                            child: FlutterFlowCountController(
+                              decrementIconBuilder: (enabled) => Icon(
+                                Icons.remove_rounded,
+                                color: enabled
+                                    ? FlutterFlowTheme.of(context).secondaryText
+                                    : FlutterFlowTheme.of(context)
+                                        .secondaryText,
+                                size: 18.0,
+                              ),
+                              incrementIconBuilder: (enabled) => Icon(
+                                Icons.add_rounded,
+                                color: enabled
+                                    ? FlutterFlowTheme.of(context).primary
+                                    : FlutterFlowTheme.of(context)
+                                        .secondaryText,
+                                size: 18.0,
+                              ),
+                              countBuilder: (count) => Text(
+                                count.toString(),
+                                style:
+                                    FlutterFlowTheme.of(context).headlineSmall,
+                              ),
+                              count: _model.countControllerValue ??=
+                                  _model.cartQuant,
+                              updateCount: (count) async {
+                                setState(
+                                    () => _model.countControllerValue = count);
+                                if (_model.countControllerValue == 0) {
+                                  FFAppState().update(() {
+                                    FFAppState().removeFromCart(FFAppState()
+                                        .cart
+                                        .where((e) =>
+                                            e.item.id ==
+                                            FFAppState().selectedProduct.id)
+                                        .toList()
+                                        .first);
+                                  });
+                                } else {
+                                  _model.cartIndex =
+                                      await actions.getIndexOfCart(
+                                    FFAppState()
+                                        .cart
+                                        .where((e) =>
+                                            e.item.id ==
+                                            FFAppState().selectedProduct.id)
+                                        .toList()
+                                        .first,
+                                  );
+                                  FFAppState().update(() {
+                                    FFAppState().updateCartAtIndex(
+                                      _model.cartIndex!,
+                                      (e) => e
+                                        ..quantity =
+                                            _model.countControllerValue,
+                                    );
+                                  });
+                                }
+
+                                setState(() {});
+                              },
+                              stepSize: 1,
+                              minimum: 1,
+                            ),
+                          ),
                         ),
                       ),
-                      child: FlutterFlowCountController(
-                        decrementIconBuilder: (enabled) => Icon(
-                          Icons.remove_rounded,
-                          color: enabled
-                              ? FlutterFlowTheme.of(context).secondaryText
-                              : FlutterFlowTheme.of(context).secondaryText,
-                          size: 16.0,
+                    if (_model.cartQuant == 0)
+                      Expanded(
+                        child: Padding(
+                          padding: EdgeInsets.all(5.0),
+                          child: FFButtonWidget(
+                            onPressed: () async {
+                              setState(() {
+                                FFAppState().addToCart(CartStruct(
+                                  quantity: _model.countControllerValue,
+                                  item: FFAppState().selectedProduct,
+                                ));
+                              });
+                              if (FFAppState()
+                                      .cart
+                                      .where((e) =>
+                                          e.item.id ==
+                                          FFAppState().selectedProduct.id)
+                                      .toList()
+                                      .first
+                                      .item
+                                      .id ==
+                                  FFAppState().selectedProduct.id) {
+                                setState(() {
+                                  _model.cartQuant = FFAppState()
+                                      .cart
+                                      .where((e) =>
+                                          e.item.id ==
+                                          FFAppState().selectedProduct.id)
+                                      .toList()
+                                      .first
+                                      .quantity;
+                                });
+                                setState(() {
+                                  _model.countControllerValue = FFAppState()
+                                      .cart
+                                      .where((e) =>
+                                          e.item.id ==
+                                          FFAppState().selectedProduct.id)
+                                      .toList()
+                                      .first
+                                      .quantity;
+                                });
+                              } else {
+                                setState(() {
+                                  _model.cartQuant = 0;
+                                });
+                              }
+                            },
+                            text: 'Add to Cart',
+                            options: FFButtonOptions(
+                              width: 130.0,
+                              height: 50.0,
+                              padding: EdgeInsetsDirectional.fromSTEB(
+                                  0.0, 0.0, 0.0, 0.0),
+                              iconPadding: EdgeInsetsDirectional.fromSTEB(
+                                  0.0, 0.0, 0.0, 0.0),
+                              color: FlutterFlowTheme.of(context).primary,
+                              textStyle: FlutterFlowTheme.of(context)
+                                  .titleSmall
+                                  .override(
+                                    fontFamily: 'Readex Pro',
+                                    color: Colors.white,
+                                  ),
+                              elevation: 2.0,
+                              borderSide: BorderSide(
+                                color: Colors.transparent,
+                                width: 1.0,
+                              ),
+                            ),
+                          ),
                         ),
-                        incrementIconBuilder: (enabled) => Icon(
-                          Icons.add_rounded,
-                          color: enabled
-                              ? FlutterFlowTheme.of(context).primary
-                              : FlutterFlowTheme.of(context).secondaryText,
-                          size: 16.0,
-                        ),
-                        countBuilder: (count) => Text(
-                          count.toString(),
-                          style: FlutterFlowTheme.of(context).headlineSmall,
-                        ),
-                        count: _model.countControllerValue ??= 1,
-                        updateCount: (count) =>
-                            setState(() => _model.countControllerValue = count),
-                        stepSize: 1,
-                        minimum: 1,
                       ),
-                    ),
-                    FFButtonWidget(
-                      onPressed: () async {
-                        setState(() {
-                          FFAppState().addToCart(CartStruct(
-                            quantity: _model.countControllerValue,
-                            item: FFAppState().selectedProduct,
-                          ));
-                        });
-                      },
-                      text: 'Add to Cart',
-                      options: FFButtonOptions(
-                        width: 130.0,
-                        height: 50.0,
-                        padding:
-                            EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
-                        iconPadding:
-                            EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
-                        color: FlutterFlowTheme.of(context).primary,
-                        textStyle:
-                            FlutterFlowTheme.of(context).titleSmall.override(
-                                  fontFamily: 'Readex Pro',
-                                  color: Colors.white,
-                                ),
-                        elevation: 2.0,
-                        borderSide: BorderSide(
-                          color: Colors.transparent,
-                          width: 1.0,
-                        ),
-                      ),
-                    ),
                   ],
                 ),
               ),

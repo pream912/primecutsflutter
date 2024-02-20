@@ -12,15 +12,14 @@ export 'cart_items_model.dart';
 
 class CartItemsWidget extends StatefulWidget {
   const CartItemsWidget({
-    Key? key,
+    super.key,
     required this.imgUrl,
     String? prodName,
     required this.amount,
     required this.quantity,
     required this.prodQuant,
     required this.index,
-  })  : this.prodName = prodName ?? 'prodQuant',
-        super(key: key);
+  }) : this.prodName = prodName ?? 'prodQuant';
 
   final String? imgUrl;
   final String prodName;
@@ -30,7 +29,7 @@ class CartItemsWidget extends StatefulWidget {
   final int? index;
 
   @override
-  _CartItemsWidgetState createState() => _CartItemsWidgetState();
+  State<CartItemsWidget> createState() => _CartItemsWidgetState();
 }
 
 class _CartItemsWidgetState extends State<CartItemsWidget> {
@@ -80,13 +79,16 @@ class _CartItemsWidgetState extends State<CartItemsWidget> {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(8.0),
-              child: Image.network(
-                widget.imgUrl!,
-                width: 90.0,
-                height: 90.0,
-                fit: BoxFit.cover,
+            Padding(
+              padding: EdgeInsets.all(5.0),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(8.0),
+                child: Image.network(
+                  widget.imgUrl!,
+                  width: 90.0,
+                  height: 90.0,
+                  fit: BoxFit.cover,
+                ),
               ),
             ),
             Expanded(
@@ -139,74 +141,123 @@ class _CartItemsWidgetState extends State<CartItemsWidget> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     Expanded(
-                      child: Text(
-                        formatNumber(
-                          widget.amount,
-                          formatType: FormatType.decimal,
-                          decimalType: DecimalType.periodDecimal,
-                          currency: '₹',
+                      child: Align(
+                        alignment: AlignmentDirectional(1.0, 0.0),
+                        child: Text(
+                          formatNumber(
+                            widget.amount,
+                            formatType: FormatType.decimal,
+                            decimalType: DecimalType.periodDecimal,
+                            currency: '₹',
+                          ),
+                          style:
+                              FlutterFlowTheme.of(context).bodyMedium.override(
+                                    fontFamily: 'Readex Pro',
+                                    color: FlutterFlowTheme.of(context).success,
+                                    fontSize: 12.0,
+                                    fontWeight: FontWeight.w600,
+                                  ),
                         ),
-                        style: FlutterFlowTheme.of(context).bodyMedium.override(
-                              fontFamily: 'Readex Pro',
-                              color: FlutterFlowTheme.of(context).success,
-                              fontWeight: FontWeight.w600,
-                            ),
                       ),
                     ),
-                    Container(
-                      width: 160.0,
-                      height: 30.0,
-                      decoration: BoxDecoration(
-                        color: FlutterFlowTheme.of(context).alternate,
-                        borderRadius: BorderRadius.circular(8.0),
-                        shape: BoxShape.rectangle,
-                        border: Border.all(
-                          color: FlutterFlowTheme.of(context).alternate,
-                          width: 2.0,
-                        ),
-                      ),
-                      child: FlutterFlowCountController(
-                        decrementIconBuilder: (enabled) => FaIcon(
-                          FontAwesomeIcons.minus,
-                          color: enabled
-                              ? FlutterFlowTheme.of(context).secondaryText
-                              : FlutterFlowTheme.of(context).alternate,
-                          size: 14.0,
-                        ),
-                        incrementIconBuilder: (enabled) => FaIcon(
-                          FontAwesomeIcons.plus,
-                          color: enabled
-                              ? FlutterFlowTheme.of(context).primary
-                              : FlutterFlowTheme.of(context).alternate,
-                          size: 14.0,
-                        ),
-                        countBuilder: (count) => Text(
-                          count.toString(),
-                          style:
-                              FlutterFlowTheme.of(context).titleLarge.override(
+                    Expanded(
+                      child: Align(
+                        alignment: AlignmentDirectional(1.0, 0.0),
+                        child: Container(
+                          width: 160.0,
+                          height: 30.0,
+                          decoration: BoxDecoration(
+                            color: FlutterFlowTheme.of(context).alternate,
+                            borderRadius: BorderRadius.circular(8.0),
+                            shape: BoxShape.rectangle,
+                            border: Border.all(
+                              color: FlutterFlowTheme.of(context).alternate,
+                              width: 2.0,
+                            ),
+                          ),
+                          child: FlutterFlowCountController(
+                            decrementIconBuilder: (enabled) => FaIcon(
+                              FontAwesomeIcons.minus,
+                              color: enabled
+                                  ? FlutterFlowTheme.of(context).secondaryText
+                                  : FlutterFlowTheme.of(context).alternate,
+                              size: 14.0,
+                            ),
+                            incrementIconBuilder: (enabled) => FaIcon(
+                              FontAwesomeIcons.plus,
+                              color: enabled
+                                  ? FlutterFlowTheme.of(context).primary
+                                  : FlutterFlowTheme.of(context).alternate,
+                              size: 14.0,
+                            ),
+                            countBuilder: (count) => Text(
+                              count.toString(),
+                              style: FlutterFlowTheme.of(context)
+                                  .titleLarge
+                                  .override(
                                     fontFamily: 'Outfit',
                                     fontSize: 14.0,
                                   ),
+                            ),
+                            count: _model.countControllerValue ??=
+                                widget.quantity!,
+                            updateCount: (count) async {
+                              setState(
+                                  () => _model.countControllerValue = count);
+                              if (_model.countControllerValue == 0) {
+                                FFAppState().update(() {
+                                  FFAppState()
+                                      .removeAtIndexFromCart(widget.index!);
+                                });
+                              } else {
+                                FFAppState().update(() {
+                                  FFAppState().updateCartAtIndex(
+                                    widget.index!,
+                                    (e) => e
+                                      ..quantity = _model.countControllerValue,
+                                  );
+                                });
+                              }
+
+                              _model.index = 0;
+                              FFAppState().itemTotal = 0.0;
+                              while (_model.index < FFAppState().cart.length) {
+                                FFAppState().update(() {
+                                  FFAppState().itemTotal =
+                                      FFAppState().itemTotal +
+                                          FFAppState()
+                                                  .cart[_model.index]
+                                                  .item
+                                                  .price *
+                                              FFAppState()
+                                                  .cart[_model.index]
+                                                  .quantity
+                                                  .toDouble();
+                                });
+                                _model.updatePage(() {
+                                  _model.index = _model.index + 1;
+                                });
+                              }
+                              if (FFAppState().itemTotal > 500.0) {
+                                setState(() {
+                                  FFAppState().delivery = 0.0;
+                                });
+                              } else {
+                                setState(() {
+                                  FFAppState().delivery = 36.0;
+                                });
+                              }
+
+                              FFAppState().update(() {
+                                FFAppState().totalPayable =
+                                    FFAppState().itemTotal +
+                                        FFAppState().delivery;
+                              });
+                            },
+                            stepSize: 1,
+                            contentPadding: EdgeInsets.all(5.0),
+                          ),
                         ),
-                        count: _model.countControllerValue ??= widget.quantity!,
-                        updateCount: (count) async {
-                          setState(() => _model.countControllerValue = count);
-                          if (_model.countControllerValue == 0) {
-                            FFAppState().update(() {
-                              FFAppState().removeAtIndexFromCart(widget.index!);
-                            });
-                          } else {
-                            FFAppState().update(() {
-                              FFAppState().updateCartAtIndex(
-                                widget.index!,
-                                (e) =>
-                                    e..quantity = _model.countControllerValue,
-                              );
-                            });
-                          }
-                        },
-                        stepSize: 1,
-                        contentPadding: EdgeInsets.all(5.0),
                       ),
                     ),
                   ],

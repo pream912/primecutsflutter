@@ -24,6 +24,8 @@ class PocketbaseGroup {
   static GetShopCall getShopCall = GetShopCall();
   static GetProductsCall getProductsCall = GetProductsCall();
   static GetListingsCall getListingsCall = GetListingsCall();
+  static GetOffersCall getOffersCall = GetOffersCall();
+  static PlaceOrderCall placeOrderCall = PlaceOrderCall();
 }
 
 class SignupCall {
@@ -38,7 +40,8 @@ class SignupCall {
   "email": "${email}",
   "password": "${password}",
   "passwordConfirm": "${passwordConfirm}",
-  "name": "${name}"
+  "name": "${name}",
+"role": "user"
 }''';
     return ApiManager.instance.makeApiCall(
       callName: 'Signup',
@@ -211,6 +214,66 @@ class GetListingsCall {
       callType: ApiCallType.GET,
       headers: {},
       params: {},
+      returnBody: true,
+      encodeBodyUtf8: false,
+      decodeUtf8: false,
+      cache: false,
+      alwaysAllowBody: false,
+    );
+  }
+}
+
+class GetOffersCall {
+  Future<ApiCallResponse> call({
+    String? shopId = '',
+  }) async {
+    return ApiManager.instance.makeApiCall(
+      callName: 'Get Offers',
+      apiUrl:
+          '${PocketbaseGroup.baseUrl}/collections/offers/records?filter=(shop=\'${shopId}\')',
+      callType: ApiCallType.GET,
+      headers: {},
+      params: {},
+      returnBody: true,
+      encodeBodyUtf8: false,
+      decodeUtf8: false,
+      cache: false,
+      alwaysAllowBody: false,
+    );
+  }
+}
+
+class PlaceOrderCall {
+  Future<ApiCallResponse> call({
+    int? orderid,
+    dynamic? itemsJson,
+    String? userid = '',
+    String? status = 'placed',
+    double? amount = 0,
+    String? shop = '',
+    String? paymentMethod = '',
+    String? paymentStatus = '',
+    String? deliveryAddress = '',
+    String? deliveryLocation = '',
+  }) async {
+    final items = _serializeJson(itemsJson, true);
+    final ffApiRequestBody = '''
+{
+  "orderid": ${orderid},
+  "items": ${items},
+  "userid": "${userid}",
+  "status": "${status}",
+  "amount": ${amount},
+  "shop": "${shop}"
+}''';
+    return ApiManager.instance.makeApiCall(
+      callName: 'Place order',
+      apiUrl: '${PocketbaseGroup.baseUrl}/collections/orders/records',
+      callType: ApiCallType.POST,
+      headers: {},
+      params: {},
+      body: ffApiRequestBody,
+      bodyType: BodyType.JSON,
       returnBody: true,
       encodeBodyUtf8: false,
       decodeUtf8: false,

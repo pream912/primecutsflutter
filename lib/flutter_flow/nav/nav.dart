@@ -125,7 +125,9 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
         FFRoute(
           name: 'Products',
           path: '/products',
-          builder: (context, params) => ProductsWidget(),
+          builder: (context, params) => ProductsWidget(
+            catIndex: params.getParam('catIndex', ParamType.int),
+          ),
         ),
         FFRoute(
           name: 'Account',

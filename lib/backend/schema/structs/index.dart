@@ -4,6 +4,7 @@ export 'cart_struct.dart';
 export 'category_struct.dart';
 export 'inventory_struct.dart';
 export 'listings_struct.dart';
+export 'offers_struct.dart';
 export 'package_struct.dart';
 export 'pin_struct.dart';
 export 'product_struct.dart';

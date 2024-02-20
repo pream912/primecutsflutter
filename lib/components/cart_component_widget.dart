@@ -8,10 +8,10 @@ import 'cart_component_model.dart';
 export 'cart_component_model.dart';
 
 class CartComponentWidget extends StatefulWidget {
-  const CartComponentWidget({Key? key}) : super(key: key);
+  const CartComponentWidget({super.key});
 
   @override
-  _CartComponentWidgetState createState() => _CartComponentWidgetState();
+  State<CartComponentWidget> createState() => _CartComponentWidgetState();
 }
 
 class _CartComponentWidgetState extends State<CartComponentWidget> {

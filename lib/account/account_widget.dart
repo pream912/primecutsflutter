@@ -1,3 +1,4 @@
+import '/auth/custom_auth/auth_util.dart';
 import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
@@ -10,10 +11,10 @@ import 'account_model.dart';
 export 'account_model.dart';
 
 class AccountWidget extends StatefulWidget {
-  const AccountWidget({Key? key}) : super(key: key);
+  const AccountWidget({super.key});
 
   @override
-  _AccountWidgetState createState() => _AccountWidgetState();
+  State<AccountWidget> createState() => _AccountWidgetState();
 }
 
 class _AccountWidgetState extends State<AccountWidget> {
@@ -100,7 +101,10 @@ class _AccountWidgetState extends State<AccountWidget> {
                       style: FlutterFlowTheme.of(context).bodyMedium,
                     ),
                     Text(
-                      'Guest',
+                      valueOrDefault<String>(
+                        loggedIn ? currentUserData?.record?.name : 'Guest',
+                        'Guest',
+                      ),
                       style: FlutterFlowTheme.of(context).bodyMedium.override(
                             fontFamily: 'Readex Pro',
                             fontWeight: FontWeight.w600,
@@ -109,34 +113,37 @@ class _AccountWidgetState extends State<AccountWidget> {
                   ],
                 ),
               ),
-              Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(20.0, 20.0, 20.0, 0.0),
-                child: FFButtonWidget(
-                  onPressed: () async {
-                    context.pushNamed('AuthCopy');
-                  },
-                  text: 'Login or Create account',
-                  options: FFButtonOptions(
-                    width: double.infinity,
-                    height: 40.0,
-                    padding:
-                        EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 0.0),
-                    iconPadding:
-                        EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
-                    color: FlutterFlowTheme.of(context).primary,
-                    textStyle: FlutterFlowTheme.of(context).titleSmall.override(
-                          fontFamily: 'Readex Pro',
-                          color: Colors.white,
-                        ),
-                    elevation: 3.0,
-                    borderSide: BorderSide(
-                      color: Colors.transparent,
-                      width: 1.0,
+              if (loggedIn == false)
+                Padding(
+                  padding:
+                      EdgeInsetsDirectional.fromSTEB(20.0, 20.0, 20.0, 0.0),
+                  child: FFButtonWidget(
+                    onPressed: () async {
+                      context.pushNamed('AuthCopy');
+                    },
+                    text: 'Login or Create account',
+                    options: FFButtonOptions(
+                      width: double.infinity,
+                      height: 40.0,
+                      padding:
+                          EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 0.0),
+                      iconPadding:
+                          EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
+                      color: FlutterFlowTheme.of(context).primary,
+                      textStyle:
+                          FlutterFlowTheme.of(context).titleSmall.override(
+                                fontFamily: 'Readex Pro',
+                                color: Colors.white,
+                              ),
+                      elevation: 3.0,
+                      borderSide: BorderSide(
+                        color: Colors.transparent,
+                        width: 1.0,
+                      ),
+                      borderRadius: BorderRadius.circular(8.0),
                     ),
-                    borderRadius: BorderRadius.circular(8.0),
                   ),
                 ),
-              ),
             ],
           ),
         ),

@@ -16,10 +16,10 @@ import 'auth_copy_model.dart';
 export 'auth_copy_model.dart';
 
 class AuthCopyWidget extends StatefulWidget {
-  const AuthCopyWidget({Key? key}) : super(key: key);
+  const AuthCopyWidget({super.key});
 
   @override
-  _AuthCopyWidgetState createState() => _AuthCopyWidgetState();
+  State<AuthCopyWidget> createState() => _AuthCopyWidgetState();
 }
 
 class _AuthCopyWidgetState extends State<AuthCopyWidget>

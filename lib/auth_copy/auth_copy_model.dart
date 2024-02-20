@@ -59,12 +59,14 @@ class AuthCopyModel extends FlutterFlowModel<AuthCopyWidget> {
 
   /// Initialization and disposal methods.
 
+  @override
   void initState(BuildContext context) {
     passwordSignupVisibility = false;
     passwordConfirmVisibility = false;
     passwordSigninVisibility = false;
   }
 
+  @override
   void dispose() {
     unfocusNode.dispose();
     tabBarController?.dispose();

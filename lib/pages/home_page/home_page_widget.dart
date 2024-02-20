@@ -1,6 +1,7 @@
 import '/backend/api_requests/api_calls.dart';
 import '/backend/schema/structs/index.dart';
 import '/components/get_location_widget.dart';
+import '/components/product_card_widget.dart';
 import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
@@ -8,19 +9,21 @@ import '/flutter_flow/flutter_flow_widgets.dart';
 import '/custom_code/actions/index.dart' as actions;
 import 'package:smooth_page_indicator/smooth_page_indicator.dart'
     as smooth_page_indicator;
+import 'package:easy_debounce/easy_debounce.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:text_search/text_search.dart';
 import 'home_page_model.dart';
 export 'home_page_model.dart';
 
 class HomePageWidget extends StatefulWidget {
-  const HomePageWidget({Key? key}) : super(key: key);
+  const HomePageWidget({super.key});
 
   @override
-  _HomePageWidgetState createState() => _HomePageWidgetState();
+  State<HomePageWidget> createState() => _HomePageWidgetState();
 }
 
 class _HomePageWidgetState extends State<HomePageWidget> {
@@ -36,6 +39,9 @@ class _HomePageWidgetState extends State<HomePageWidget> {
     // On page load action.
     SchedulerBinding.instance.addPostFrameCallback((_) async {
       if (FFAppState().pin.pin > 0) {
+        setState(() {
+          _model.loading = true;
+        });
         _model.productsResult = await PocketbaseGroup.getListingsCall.call(
           shopId: FFAppState().shop.id,
         );
@@ -62,6 +68,17 @@ class _HomePageWidgetState extends State<HomePageWidget> {
             setState(() {
               FFAppState().categories =
                   _model.catOutput!.toList().cast<CategoryStruct>();
+            });
+          }
+          _model.offersResult = await PocketbaseGroup.getOffersCall.call(
+            shopId: FFAppState().shop.id,
+          );
+          if ((_model.offersResult?.succeeded ?? true)) {
+            await actions.processOffers(
+              (_model.offersResult?.bodyText ?? ''),
+            );
+            setState(() {
+              _model.loading = false;
             });
           }
         }
@@ -224,6 +241,27 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                             child: TextFormField(
                               controller: _model.textController,
                               focusNode: _model.textFieldFocusNode,
+                              onChanged: (_) => EasyDebounce.debounce(
+                                '_model.textController',
+                                Duration(milliseconds: 2000),
+                                () async {
+                                  safeSetState(() {
+                                    _model.simpleSearchResults = TextSearch(
+                                            FFAppState()
+                                                .listings
+                                                .map((e) => e.product.prodName)
+                                                .toList()
+                                                .map((str) =>
+                                                    TextSearchItem.fromTerms(
+                                                        str, [str]))
+                                                .toList())
+                                        .search(_model.textController.text)
+                                        .map((r) => r.object)
+                                        .toList();
+                                    ;
+                                  });
+                                },
+                              ),
                               autofocus: true,
                               obscureText: false,
                               decoration: InputDecoration(
@@ -627,200 +665,62 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                   decoration: BoxDecoration(
                     color: FlutterFlowTheme.of(context).secondaryBackground,
                   ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.max,
-                    children: [
-                      Align(
-                        alignment: AlignmentDirectional(-1.0, 0.0),
-                        child: Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
-                              20.0, 10.0, 0.0, 0.0),
-                          child: Text(
-                            'Featured products',
-                            style: FlutterFlowTheme.of(context).titleLarge,
+                  child: Visibility(
+                    visible: _model.loading == false,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        Align(
+                          alignment: AlignmentDirectional(-1.0, 0.0),
+                          child: Padding(
+                            padding: EdgeInsetsDirectional.fromSTEB(
+                                20.0, 10.0, 0.0, 0.0),
+                            child: Text(
+                              'Featured products',
+                              style: FlutterFlowTheme.of(context).titleLarge,
+                            ),
                           ),
                         ),
-                      ),
-                      Expanded(
-                        child: Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
-                              20.0, 10.0, 20.0, 0.0),
-                          child: Builder(
-                            builder: (context) {
-                              final products = FFAppState()
-                                  .listings
-                                  .where((e) => e.featured)
-                                  .toList();
-                              return ListView.builder(
-                                padding: EdgeInsets.zero,
-                                scrollDirection: Axis.horizontal,
-                                itemCount: products.length,
-                                itemBuilder: (context, productsIndex) {
-                                  final productsItem = products[productsIndex];
-                                  return Container(
-                                    width: 250.0,
-                                    height:
-                                        MediaQuery.sizeOf(context).height * 1.0,
-                                    decoration: BoxDecoration(
-                                      color: FlutterFlowTheme.of(context)
-                                          .secondaryBackground,
-                                    ),
-                                    child: Card(
-                                      clipBehavior: Clip.antiAliasWithSaveLayer,
-                                      color: FlutterFlowTheme.of(context)
-                                          .secondaryBackground,
-                                      elevation: 4.0,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(8.0),
-                                      ),
-                                      child: Column(
-                                        mainAxisSize: MainAxisSize.max,
-                                        children: [
-                                          ClipRRect(
-                                            borderRadius:
-                                                BorderRadius.circular(8.0),
-                                            child: Image.network(
-                                              'https://apis.avmediawork.in/api/files/products/${productsItem.product.id}/${productsItem.product.image}',
-                                              width: 250.0,
-                                              height: 250.0,
-                                              fit: BoxFit.cover,
-                                            ),
-                                          ),
-                                          Align(
-                                            alignment:
-                                                AlignmentDirectional(-1.0, 0.0),
-                                            child: Padding(
-                                              padding: EdgeInsetsDirectional
-                                                  .fromSTEB(
-                                                      10.0, 10.0, 0.0, 0.0),
-                                              child: Text(
-                                                productsItem.product.prodName,
-                                                style:
-                                                    FlutterFlowTheme.of(context)
-                                                        .bodyLarge,
-                                              ),
-                                            ),
-                                          ),
-                                          Padding(
-                                            padding:
-                                                EdgeInsetsDirectional.fromSTEB(
-                                                    10.0, 10.0, 0.0, 0.0),
-                                            child: Row(
-                                              mainAxisSize: MainAxisSize.max,
-                                              children: [
-                                                Text(
-                                                  '₹',
-                                                  style: FlutterFlowTheme.of(
-                                                          context)
-                                                      .bodyMedium
-                                                      .override(
-                                                        fontFamily:
-                                                            'Readex Pro',
-                                                        fontSize: 16.0,
-                                                        fontWeight:
-                                                            FontWeight.w500,
-                                                      ),
-                                                ),
-                                                Padding(
-                                                  padding: EdgeInsetsDirectional
-                                                      .fromSTEB(
-                                                          2.0, 0.0, 0.0, 0.0),
-                                                  child: Text(
-                                                    productsItem.price
-                                                        .toString(),
-                                                    style: FlutterFlowTheme.of(
-                                                            context)
-                                                        .bodyMedium,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                          Opacity(
-                                            opacity: 0.9,
-                                            child: Align(
-                                              alignment: AlignmentDirectional(
-                                                  -1.0, 0.0),
-                                              child: Padding(
-                                                padding: EdgeInsetsDirectional
-                                                    .fromSTEB(
-                                                        8.0, 0.0, 0.0, 0.0),
-                                                child: Text(
-                                                  '${productsItem.quantity.toString()}${productsItem.uom}',
-                                                  style: FlutterFlowTheme.of(
-                                                          context)
-                                                      .bodyMedium
-                                                      .override(
-                                                        fontFamily:
-                                                            'Readex Pro',
-                                                        fontStyle:
-                                                            FontStyle.italic,
-                                                      ),
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                          Align(
-                                            alignment:
-                                                AlignmentDirectional(1.0, 1.0),
-                                            child: Padding(
-                                              padding: EdgeInsetsDirectional
-                                                  .fromSTEB(
-                                                      0.0, 20.0, 10.0, 0.0),
-                                              child: FFButtonWidget(
-                                                onPressed: () {
-                                                  print('Button pressed ...');
-                                                },
-                                                text: 'Add',
-                                                icon: Icon(
-                                                  Icons.add,
-                                                  size: 15.0,
-                                                ),
-                                                options: FFButtonOptions(
-                                                  height: 40.0,
-                                                  padding: EdgeInsetsDirectional
-                                                      .fromSTEB(
-                                                          24.0, 0.0, 24.0, 0.0),
-                                                  iconPadding:
-                                                      EdgeInsetsDirectional
-                                                          .fromSTEB(0.0, 0.0,
-                                                              0.0, 0.0),
-                                                  color: FlutterFlowTheme.of(
-                                                          context)
-                                                      .primary,
-                                                  textStyle:
-                                                      FlutterFlowTheme.of(
-                                                              context)
-                                                          .titleSmall
-                                                          .override(
-                                                            fontFamily:
-                                                                'Readex Pro',
-                                                            color: Colors.white,
-                                                          ),
-                                                  elevation: 3.0,
-                                                  borderSide: BorderSide(
-                                                    color: Colors.transparent,
-                                                    width: 1.0,
-                                                  ),
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          25.0),
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  );
-                                },
-                              );
-                            },
+                        Expanded(
+                          child: Padding(
+                            padding: EdgeInsetsDirectional.fromSTEB(
+                                20.0, 10.0, 20.0, 0.0),
+                            child: Builder(
+                              builder: (context) {
+                                final products = FFAppState()
+                                    .listings
+                                    .where((e) => e.featured)
+                                    .toList();
+                                return ListView.builder(
+                                  padding: EdgeInsets.zero,
+                                  scrollDirection: Axis.horizontal,
+                                  itemCount: products.length,
+                                  itemBuilder: (context, productsIndex) {
+                                    final productsItem =
+                                        products[productsIndex];
+                                    return ProductCardWidget(
+                                      key: Key(
+                                          'Key8sn_${productsIndex}_of_${products.length}'),
+                                      imgUrl:
+                                          'https://apis.avmediawork.in/api/files/products/${productsItem.product.id}/${productsItem.product.image}',
+                                      prodName: productsItem.product.prodName,
+                                      prodPrice: productsItem.price,
+                                      prodQuant:
+                                          '${productsItem.quantity.toString()}${productsItem.uom}',
+                                      listingID: productsItem.id,
+                                      itemIndex: productsIndex,
+                                      offerPrice: productsItem.discountedPrice,
+                                      offerType: productsItem.offerType,
+                                      offerValue: productsItem.offerValue,
+                                    );
+                                  },
+                                );
+                              },
+                            ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
                 Container(
@@ -829,103 +729,109 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                   decoration: BoxDecoration(
                     color: FlutterFlowTheme.of(context).secondaryBackground,
                   ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.max,
-                    children: [
-                      Align(
-                        alignment: AlignmentDirectional(-1.0, -1.0),
-                        child: Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
-                              20.0, 20.0, 0.0, 0.0),
-                          child: Text(
-                            'Shop by category',
-                            style: FlutterFlowTheme.of(context).titleLarge,
+                  child: Visibility(
+                    visible: _model.loading == false,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        Align(
+                          alignment: AlignmentDirectional(-1.0, -1.0),
+                          child: Padding(
+                            padding: EdgeInsetsDirectional.fromSTEB(
+                                20.0, 20.0, 0.0, 0.0),
+                            child: Text(
+                              'Shop by category',
+                              style: FlutterFlowTheme.of(context).titleLarge,
+                            ),
                           ),
                         ),
-                      ),
-                      Expanded(
-                        child: Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
-                              20.0, 10.0, 20.0, 0.0),
-                          child: Builder(
-                            builder: (context) {
-                              final categories =
-                                  FFAppState().categories.toList();
-                              return GridView.builder(
-                                padding: EdgeInsets.zero,
-                                gridDelegate:
-                                    SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: 3,
-                                  crossAxisSpacing: 0.0,
-                                  mainAxisSpacing: 20.0,
-                                  childAspectRatio: 0.9,
-                                ),
-                                scrollDirection: Axis.vertical,
-                                itemCount: categories.length,
-                                itemBuilder: (context, categoriesIndex) {
-                                  final categoriesItem =
-                                      categories[categoriesIndex];
-                                  return InkWell(
-                                    splashColor: Colors.transparent,
-                                    focusColor: Colors.transparent,
-                                    hoverColor: Colors.transparent,
-                                    highlightColor: Colors.transparent,
-                                    onTap: () async {
-                                      setState(() {
-                                        FFAppState().selectedProducts =
-                                            FFAppState()
-                                                .listings
-                                                .where((e) =>
-                                                    e.product.category ==
-                                                    categoriesItem.id)
-                                                .toList()
-                                                .cast<ListingsStruct>();
-                                      });
+                        Expanded(
+                          child: Padding(
+                            padding: EdgeInsetsDirectional.fromSTEB(
+                                20.0, 10.0, 20.0, 0.0),
+                            child: Builder(
+                              builder: (context) {
+                                final categories =
+                                    FFAppState().categories.toList();
+                                return GridView.builder(
+                                  padding: EdgeInsets.zero,
+                                  gridDelegate:
+                                      SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: 3,
+                                    crossAxisSpacing: 0.0,
+                                    mainAxisSpacing: 20.0,
+                                    childAspectRatio: 0.9,
+                                  ),
+                                  scrollDirection: Axis.vertical,
+                                  itemCount: categories.length,
+                                  itemBuilder: (context, categoriesIndex) {
+                                    final categoriesItem =
+                                        categories[categoriesIndex];
+                                    return InkWell(
+                                      splashColor: Colors.transparent,
+                                      focusColor: Colors.transparent,
+                                      hoverColor: Colors.transparent,
+                                      highlightColor: Colors.transparent,
+                                      onTap: () async {
+                                        setState(() {
+                                          FFAppState().selectedProducts =
+                                              FFAppState()
+                                                  .listings
+                                                  .where((e) =>
+                                                      e.product.category ==
+                                                      categoriesItem.id)
+                                                  .toList()
+                                                  .cast<ListingsStruct>();
+                                        });
+                                        setState(() {
+                                          FFAppState().selectedCategory =
+                                              categoriesItem;
+                                        });
 
-                                      context.pushNamed('Products');
-                                    },
-                                    child: Container(
-                                      width: 100.0,
-                                      height: 150.0,
-                                      decoration: BoxDecoration(
-                                        color: FlutterFlowTheme.of(context)
-                                            .secondaryBackground,
-                                      ),
-                                      child: Column(
-                                        mainAxisSize: MainAxisSize.max,
-                                        children: [
-                                          ClipRRect(
-                                            borderRadius:
-                                                BorderRadius.circular(8.0),
-                                            child: Image.network(
-                                              'https://apis.avmediawork.in/api/files/categories/${categoriesItem.id}/${categoriesItem.cover}',
-                                              width: 100.0,
-                                              height: 100.0,
-                                              fit: BoxFit.cover,
+                                        context.pushNamed('Products');
+                                      },
+                                      child: Container(
+                                        width: 100.0,
+                                        height: 150.0,
+                                        decoration: BoxDecoration(
+                                          color: FlutterFlowTheme.of(context)
+                                              .secondaryBackground,
+                                        ),
+                                        child: Column(
+                                          mainAxisSize: MainAxisSize.max,
+                                          children: [
+                                            ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(8.0),
+                                              child: Image.network(
+                                                'https://apis.avmediawork.in/api/files/categories/${categoriesItem.id}/${categoriesItem.cover}',
+                                                width: 100.0,
+                                                height: 100.0,
+                                                fit: BoxFit.cover,
+                                              ),
                                             ),
-                                          ),
-                                          Padding(
-                                            padding:
-                                                EdgeInsetsDirectional.fromSTEB(
-                                                    0.0, 1.0, 0.0, 0.0),
-                                            child: Text(
-                                              categoriesItem.catName,
-                                              style:
-                                                  FlutterFlowTheme.of(context)
-                                                      .bodyMedium,
+                                            Padding(
+                                              padding: EdgeInsetsDirectional
+                                                  .fromSTEB(0.0, 1.0, 0.0, 0.0),
+                                              child: Text(
+                                                categoriesItem.catName,
+                                                style:
+                                                    FlutterFlowTheme.of(context)
+                                                        .bodyMedium,
+                                              ),
                                             ),
-                                          ),
-                                        ],
+                                          ],
+                                        ),
                                       ),
-                                    ),
-                                  );
-                                },
-                              );
-                            },
+                                    );
+                                  },
+                                );
+                              },
+                            ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ],

@@ -12,10 +12,10 @@ import 'get_location_model.dart';
 export 'get_location_model.dart';
 
 class GetLocationWidget extends StatefulWidget {
-  const GetLocationWidget({Key? key}) : super(key: key);
+  const GetLocationWidget({super.key});
 
   @override
-  _GetLocationWidgetState createState() => _GetLocationWidgetState();
+  State<GetLocationWidget> createState() => _GetLocationWidgetState();
 }
 
 class _GetLocationWidgetState extends State<GetLocationWidget> {

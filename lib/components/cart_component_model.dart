@@ -9,8 +9,10 @@ import 'package:provider/provider.dart';
 class CartComponentModel extends FlutterFlowModel<CartComponentWidget> {
   /// Initialization and disposal methods.
 
+  @override
   void initState(BuildContext context) {}
 
+  @override
   void dispose() {}
 
   /// Action blocks are added here.

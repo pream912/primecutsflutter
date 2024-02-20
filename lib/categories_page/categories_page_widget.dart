@@ -11,10 +11,10 @@ import 'categories_page_model.dart';
 export 'categories_page_model.dart';
 
 class CategoriesPageWidget extends StatefulWidget {
-  const CategoriesPageWidget({Key? key}) : super(key: key);
+  const CategoriesPageWidget({super.key});
 
   @override
-  _CategoriesPageWidgetState createState() => _CategoriesPageWidgetState();
+  State<CategoriesPageWidget> createState() => _CategoriesPageWidgetState();
 }
 
 class _CategoriesPageWidgetState extends State<CategoriesPageWidget> {
@@ -122,6 +122,9 @@ class _CategoriesPageWidgetState extends State<CategoriesPageWidget> {
                                         e.product.category == categoriesItem.id)
                                     .toList()
                                     .cast<ListingsStruct>();
+                              });
+                              setState(() {
+                                FFAppState().selectedCategory = categoriesItem;
                               });
 
                               context.pushNamed('Products');

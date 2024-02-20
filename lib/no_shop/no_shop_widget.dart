@@ -11,10 +11,10 @@ import 'no_shop_model.dart';
 export 'no_shop_model.dart';
 
 class NoShopWidget extends StatefulWidget {
-  const NoShopWidget({Key? key}) : super(key: key);
+  const NoShopWidget({super.key});
 
   @override
-  _NoShopWidgetState createState() => _NoShopWidgetState();
+  State<NoShopWidget> createState() => _NoShopWidgetState();
 }
 
 class _NoShopWidgetState extends State<NoShopWidget> {

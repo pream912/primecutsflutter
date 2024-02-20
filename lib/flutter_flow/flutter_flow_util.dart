@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
+import 'package:collection/collection.dart';
 import 'package:from_css_color/from_css_color.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
@@ -292,9 +293,6 @@ extension IterableExt<T> on Iterable<T> {
       .toList();
 }
 
-void setAppLanguage(BuildContext context, String language) =>
-    MyApp.of(context).setLocale(language);
-
 void setDarkModeSetting(BuildContext context, ThemeMode themeMode) =>
     MyApp.of(context).setThemeMode(themeMode);
 
@@ -337,6 +335,12 @@ extension FFStringExt on String {
 
 extension ListFilterExt<T> on Iterable<T?> {
   List<T> get withoutNulls => where((s) => s != null).map((e) => e!).toList();
+}
+
+extension MapListContainsExt on List<dynamic> {
+  bool containsMap(dynamic map) => map is Map
+      ? any((e) => e is Map && const DeepCollectionEquality().equals(e, map))
+      : contains(map);
 }
 
 extension ListDivideExt<T extends Widget> on Iterable<T> {
