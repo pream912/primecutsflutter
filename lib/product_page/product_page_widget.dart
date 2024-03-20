@@ -9,7 +9,6 @@ import '/custom_code/actions/index.dart' as actions;
 import 'package:badges/badges.dart' as badges;
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -127,15 +126,6 @@ class _ProductPageWidgetState extends State<ProductPageWidget>
 
   @override
   Widget build(BuildContext context) {
-    if (isiOS) {
-      SystemChrome.setSystemUIOverlayStyle(
-        SystemUiOverlayStyle(
-          statusBarBrightness: Theme.of(context).brightness,
-          systemStatusBarContrastEnforced: true,
-        ),
-      );
-    }
-
     context.watch<FFAppState>();
 
     return Scaffold(
@@ -193,7 +183,7 @@ class _ProductPageWidgetState extends State<ProductPageWidget>
                 icon: Icon(
                   Icons.shopping_cart_outlined,
                   color: FlutterFlowTheme.of(context).secondaryText,
-                  size: 30.0,
+                  size: 25.0,
                 ),
                 onPressed: () async {
                   context.pushNamed('Cart');
@@ -438,6 +428,47 @@ class _ProductPageWidgetState extends State<ProductPageWidget>
                               }
                             },
                             text: 'Add to Cart',
+                            options: FFButtonOptions(
+                              width: 130.0,
+                              height: 50.0,
+                              padding: EdgeInsetsDirectional.fromSTEB(
+                                  0.0, 0.0, 0.0, 0.0),
+                              iconPadding: EdgeInsetsDirectional.fromSTEB(
+                                  0.0, 0.0, 0.0, 0.0),
+                              color: FlutterFlowTheme.of(context).primary,
+                              textStyle: FlutterFlowTheme.of(context)
+                                  .titleSmall
+                                  .override(
+                                    fontFamily: 'Readex Pro',
+                                    color: Colors.white,
+                                  ),
+                              elevation: 2.0,
+                              borderSide: BorderSide(
+                                color: Colors.transparent,
+                                width: 1.0,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    if (_model.cartQuant != 0)
+                      Expanded(
+                        child: Padding(
+                          padding: EdgeInsets.all(5.0),
+                          child: FFButtonWidget(
+                            onPressed: () async {
+                              context.pushNamed(
+                                'Cart',
+                                extra: <String, dynamic>{
+                                  kTransitionInfoKey: TransitionInfo(
+                                    hasTransition: true,
+                                    transitionType:
+                                        PageTransitionType.bottomToTop,
+                                  ),
+                                },
+                              );
+                            },
+                            text: 'Checkout',
                             options: FFButtonOptions(
                               width: 130.0,
                               height: 50.0,

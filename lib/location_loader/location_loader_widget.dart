@@ -5,7 +5,6 @@ import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'location_loader_model.dart';
@@ -31,7 +30,7 @@ class _LocationLoaderWidgetState extends State<LocationLoaderWidget> {
     // On page load action.
     SchedulerBinding.instance.addPostFrameCallback((_) async {
       if (FFAppState().pin.hasPin() == true) {
-        context.pushNamed('HomePage');
+        context.goNamed('HomePage');
       } else {
         await showModalBottomSheet(
           isScrollControlled: true,
@@ -66,15 +65,6 @@ class _LocationLoaderWidgetState extends State<LocationLoaderWidget> {
 
   @override
   Widget build(BuildContext context) {
-    if (isiOS) {
-      SystemChrome.setSystemUIOverlayStyle(
-        SystemUiOverlayStyle(
-          statusBarBrightness: Theme.of(context).brightness,
-          systemStatusBarContrastEnforced: true,
-        ),
-      );
-    }
-
     context.watch<FFAppState>();
 
     return GestureDetector(

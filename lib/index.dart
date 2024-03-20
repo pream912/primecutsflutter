@@ -8,3 +8,4 @@ export '/categories_page/categories_page_widget.dart' show CategoriesPageWidget;
 export '/products/products_widget.dart' show ProductsWidget;
 export '/account/account_widget.dart' show AccountWidget;
 export '/cart/cart_widget.dart' show CartWidget;
+export '/profile/profile_widget.dart' show ProfileWidget;

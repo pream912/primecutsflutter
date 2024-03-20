@@ -1,7 +1,6 @@
-import '/auth/custom_auth/auth_util.dart';
-import '/backend/api_requests/api_calls.dart';
 import '/backend/schema/structs/index.dart';
 import '/components/cart_items_widget.dart';
+import '/components/get_map_location_widget.dart';
 import '/flutter_flow/flutter_flow_drop_down.dart';
 import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
@@ -10,7 +9,6 @@ import '/flutter_flow/flutter_flow_widgets.dart';
 import '/flutter_flow/form_field_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'cart_model.dart';
@@ -45,7 +43,7 @@ class _CartWidgetState extends State<CartWidget> {
       while (_model.index < FFAppState().cart.length) {
         setState(() {
           FFAppState().itemTotal = FFAppState().itemTotal +
-              FFAppState().cart[_model.index].item.price *
+              FFAppState().cart[_model.index].item.price.toDouble() *
                   FFAppState().cart[_model.index].quantity.toDouble();
         });
         setState(() {
@@ -83,15 +81,6 @@ class _CartWidgetState extends State<CartWidget> {
 
   @override
   Widget build(BuildContext context) {
-    if (isiOS) {
-      SystemChrome.setSystemUIOverlayStyle(
-        SystemUiOverlayStyle(
-          statusBarBrightness: Theme.of(context).brightness,
-          systemStatusBarContrastEnforced: true,
-        ),
-      );
-    }
-
     context.watch<FFAppState>();
 
     return GestureDetector(
@@ -211,7 +200,8 @@ class _CartWidgetState extends State<CartWidget> {
                                             'https://apis.avmediawork.in/api/files/products/${cartItemsItem.item.product.id}/${cartItemsItem.item.product.image}',
                                         prodName:
                                             cartItemsItem.item.product.prodName,
-                                        amount: cartItemsItem.item.price *
+                                        amount: cartItemsItem.item.price
+                                                .toDouble() *
                                             cartItemsItem.quantity.toDouble(),
                                         quantity: cartItemsItem.quantity,
                                         prodQuant:
@@ -458,90 +448,59 @@ class _CartWidgetState extends State<CartWidget> {
                                 isSearchable: false,
                                 isMultiSelect: false,
                               ),
-                              FFButtonWidget(
-                                onPressed: () async {
-                                  currentUserLocationValue =
-                                      await getCurrentUserLocation(
-                                          defaultLocation: LatLng(0.0, 0.0));
-                                  _model.apiResult3z2 =
-                                      await PocketbaseGroup.placeOrderCall.call(
-                                    orderid: getCurrentTimestamp
-                                        .millisecondsSinceEpoch,
-                                    userid: currentUserUid,
-                                    itemsJson: FFAppState()
-                                        .cart
-                                        .map((e) => e.toMap())
-                                        .toList(),
-                                    amount: FFAppState().totalPayable,
-                                    status: 'placed',
-                                    shop: FFAppState().shop.id,
-                                    paymentMethod: 'cod',
-                                    paymentStatus: 'pending',
-                                    deliveryAddress: _model.textController.text,
-                                    deliveryLocation:
-                                        currentUserLocationValue?.toString(),
-                                  );
-                                  if ((_model.apiResult3z2?.succeeded ??
-                                      true)) {
+                              Builder(
+                                builder: (context) => FFButtonWidget(
+                                  onPressed: () async {
+                                    currentUserLocationValue =
+                                        await getCurrentUserLocation(
+                                            defaultLocation: LatLng(0.0, 0.0));
                                     await showDialog(
+                                      barrierDismissible: false,
                                       context: context,
-                                      builder: (alertDialogContext) {
-                                        return AlertDialog(
-                                          title: Text('Order placed'),
-                                          actions: [
-                                            TextButton(
-                                              onPressed: () => Navigator.pop(
-                                                  alertDialogContext),
-                                              child: Text('Ok'),
-                                            ),
-                                          ],
+                                      builder: (dialogContext) {
+                                        return Dialog(
+                                          elevation: 0,
+                                          insetPadding: EdgeInsets.zero,
+                                          backgroundColor: Colors.transparent,
+                                          alignment: AlignmentDirectional(
+                                                  0.0, 0.0)
+                                              .resolve(
+                                                  Directionality.of(context)),
+                                          child: GestureDetector(
+                                            onTap: () => _model
+                                                    .unfocusNode.canRequestFocus
+                                                ? FocusScope.of(context)
+                                                    .requestFocus(
+                                                        _model.unfocusNode)
+                                                : FocusScope.of(context)
+                                                    .unfocus(),
+                                            child: GetMapLocationWidget(),
+                                          ),
                                         );
                                       },
-                                    );
-                                  } else {
-                                    await showDialog(
-                                      context: context,
-                                      builder: (alertDialogContext) {
-                                        return AlertDialog(
-                                          title: Text('Errot'),
-                                          content: Text((_model.apiResult3z2
-                                                      ?.statusCode ??
-                                                  200)
-                                              .toString()),
-                                          actions: [
-                                            TextButton(
-                                              onPressed: () => Navigator.pop(
-                                                  alertDialogContext),
-                                              child: Text('Ok'),
-                                            ),
-                                          ],
-                                        );
-                                      },
-                                    );
-                                  }
-
-                                  setState(() {});
-                                },
-                                text: 'Place order',
-                                options: FFButtonOptions(
-                                  height: 40.0,
-                                  padding: EdgeInsetsDirectional.fromSTEB(
-                                      24.0, 0.0, 24.0, 0.0),
-                                  iconPadding: EdgeInsetsDirectional.fromSTEB(
-                                      0.0, 0.0, 0.0, 0.0),
-                                  color: FlutterFlowTheme.of(context).primary,
-                                  textStyle: FlutterFlowTheme.of(context)
-                                      .titleSmall
-                                      .override(
-                                        fontFamily: 'Readex Pro',
-                                        color: Colors.white,
-                                      ),
-                                  elevation: 3.0,
-                                  borderSide: BorderSide(
-                                    color: Colors.transparent,
-                                    width: 1.0,
+                                    ).then((value) => setState(() {}));
+                                  },
+                                  text: 'Place order',
+                                  options: FFButtonOptions(
+                                    height: 40.0,
+                                    padding: EdgeInsetsDirectional.fromSTEB(
+                                        24.0, 0.0, 24.0, 0.0),
+                                    iconPadding: EdgeInsetsDirectional.fromSTEB(
+                                        0.0, 0.0, 0.0, 0.0),
+                                    color: FlutterFlowTheme.of(context).primary,
+                                    textStyle: FlutterFlowTheme.of(context)
+                                        .titleSmall
+                                        .override(
+                                          fontFamily: 'Readex Pro',
+                                          color: Colors.white,
+                                        ),
+                                    elevation: 3.0,
+                                    borderSide: BorderSide(
+                                      color: Colors.transparent,
+                                      width: 1.0,
+                                    ),
+                                    borderRadius: BorderRadius.circular(8.0),
                                   ),
-                                  borderRadius: BorderRadius.circular(8.0),
                                 ),
                               ),
                             ],

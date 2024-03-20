@@ -5,7 +5,6 @@ import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'products_model.dart';
@@ -45,15 +44,6 @@ class _ProductsWidgetState extends State<ProductsWidget> {
 
   @override
   Widget build(BuildContext context) {
-    if (isiOS) {
-      SystemChrome.setSystemUIOverlayStyle(
-        SystemUiOverlayStyle(
-          statusBarBrightness: Theme.of(context).brightness,
-          systemStatusBarContrastEnforced: true,
-        ),
-      );
-    }
-
     context.watch<FFAppState>();
 
     return GestureDetector(
@@ -125,12 +115,12 @@ class _ProductsWidgetState extends State<ProductsWidget> {
                               imgUrl:
                                   'https://apis.avmediawork.in/api/files/products/${productsItem.product.id}/${productsItem.product.image}',
                               prodName: productsItem.product.prodName,
-                              prodPrice: productsItem.price,
+                              prodPrice: productsItem.price.toDouble(),
                               prodQuant:
                                   '${productsItem.quantity.toString()}${productsItem.uom}',
                               listingID: productsItem.id,
                               itemIndex: productsIndex,
-                              offerPrice: productsItem.price,
+                              offerPrice: productsItem.price.toDouble(),
                               offerType: productsItem.offerType,
                               offerValue: productsItem.offerValue,
                             ),

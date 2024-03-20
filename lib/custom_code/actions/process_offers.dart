@@ -106,9 +106,9 @@ Future processOffers(String? rawOffers) async {
       listings.forEachIndexed((index, listItem) {
         if (listItem.product.category == offer.categories) {
           if (offer.offerType == 'percent') {
-            double op =
+            int op =
                 (listItem.price - (listItem.price * (offer.offerValue / 100)))
-                    .round() as double;
+                    .round();
             FFAppState().update(() {
               FFAppState().listings[index].discountedPrice = op;
               FFAppState().listings[index].offerType = offer.offerType;
@@ -116,7 +116,7 @@ Future processOffers(String? rawOffers) async {
             });
           }
           if (offer.offerType == 'flat') {
-            double op = (listItem.price - offer.offerValue).round() as double;
+            int op = (listItem.price - offer.offerValue).round();
             FFAppState().update(() {
               FFAppState().listings[index].discountedPrice = op;
               FFAppState().listings[index].offerType = offer.offerType;
@@ -126,9 +126,9 @@ Future processOffers(String? rawOffers) async {
         }
         if (listItem.product.subcategory == offer.subcategories) {
           if (offer.offerType == 'percent') {
-            double op =
+            int op =
                 (listItem.price - (listItem.price * (offer.offerValue / 100)))
-                    .round() as double;
+                    .round();
             FFAppState().update(() {
               FFAppState().listings[index].discountedPrice = op;
               FFAppState().listings[index].offerType = offer.offerType;
@@ -136,7 +136,7 @@ Future processOffers(String? rawOffers) async {
             });
           }
           if (offer.offerType == 'flat') {
-            double op = (listItem.price - offer.offerValue).round() as double;
+            int op = (listItem.price - offer.offerValue).round();
             FFAppState().update(() {
               FFAppState().listings[index].discountedPrice = op;
               FFAppState().listings[index].offerType = offer.offerType;
@@ -146,9 +146,9 @@ Future processOffers(String? rawOffers) async {
         }
         if (listItem.product.id == offer.products) {
           if (offer.offerType == 'percent') {
-            double op =
+            int op =
                 (listItem.price - (listItem.price * (offer.offerValue / 100)))
-                    .round() as double;
+                    .round();
             FFAppState().update(() {
               FFAppState().listings[index].discountedPrice = op;
               FFAppState().listings[index].offerType = offer.offerType;
@@ -156,7 +156,7 @@ Future processOffers(String? rawOffers) async {
             });
           }
           if (offer.offerType == 'flat') {
-            double op = (listItem.price - offer.offerValue).round() as double;
+            int op = (listItem.price - offer.offerValue).round();
             FFAppState().update(() {
               FFAppState().listings[index].discountedPrice = op;
               FFAppState().listings[index].offerType = offer.offerType;

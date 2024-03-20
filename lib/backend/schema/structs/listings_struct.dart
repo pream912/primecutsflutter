@@ -12,23 +12,23 @@ class ListingsStruct extends BaseStruct {
     ProductStruct? product,
     String? shop,
     String? uom,
-    double? price,
-    double? quantity,
     bool? featured,
-    double? discountedPrice,
     String? offerType,
     int? offerValue,
+    int? quantity,
+    int? price,
+    int? discountedPrice,
   })  : _id = id,
         _created = created,
         _product = product,
         _shop = shop,
         _uom = uom,
-        _price = price,
-        _quantity = quantity,
         _featured = featured,
-        _discountedPrice = discountedPrice,
         _offerType = offerType,
-        _offerValue = offerValue;
+        _offerValue = offerValue,
+        _quantity = quantity,
+        _price = price,
+        _discountedPrice = discountedPrice;
 
   // "id" field.
   String? _id;
@@ -62,33 +62,11 @@ class ListingsStruct extends BaseStruct {
   set uom(String? val) => _uom = val;
   bool hasUom() => _uom != null;
 
-  // "price" field.
-  double? _price;
-  double get price => _price ?? 0.0;
-  set price(double? val) => _price = val;
-  void incrementPrice(double amount) => _price = price + amount;
-  bool hasPrice() => _price != null;
-
-  // "quantity" field.
-  double? _quantity;
-  double get quantity => _quantity ?? 0.0;
-  set quantity(double? val) => _quantity = val;
-  void incrementQuantity(double amount) => _quantity = quantity + amount;
-  bool hasQuantity() => _quantity != null;
-
   // "featured" field.
   bool? _featured;
   bool get featured => _featured ?? false;
   set featured(bool? val) => _featured = val;
   bool hasFeatured() => _featured != null;
-
-  // "discounted_price" field.
-  double? _discountedPrice;
-  double get discountedPrice => _discountedPrice ?? 0.0;
-  set discountedPrice(double? val) => _discountedPrice = val;
-  void incrementDiscountedPrice(double amount) =>
-      _discountedPrice = discountedPrice + amount;
-  bool hasDiscountedPrice() => _discountedPrice != null;
 
   // "offer_type" field.
   String? _offerType;
@@ -103,18 +81,40 @@ class ListingsStruct extends BaseStruct {
   void incrementOfferValue(int amount) => _offerValue = offerValue + amount;
   bool hasOfferValue() => _offerValue != null;
 
+  // "quantity" field.
+  int? _quantity;
+  int get quantity => _quantity ?? 0;
+  set quantity(int? val) => _quantity = val;
+  void incrementQuantity(int amount) => _quantity = quantity + amount;
+  bool hasQuantity() => _quantity != null;
+
+  // "price" field.
+  int? _price;
+  int get price => _price ?? 0;
+  set price(int? val) => _price = val;
+  void incrementPrice(int amount) => _price = price + amount;
+  bool hasPrice() => _price != null;
+
+  // "discounted_price" field.
+  int? _discountedPrice;
+  int get discountedPrice => _discountedPrice ?? 0;
+  set discountedPrice(int? val) => _discountedPrice = val;
+  void incrementDiscountedPrice(int amount) =>
+      _discountedPrice = discountedPrice + amount;
+  bool hasDiscountedPrice() => _discountedPrice != null;
+
   static ListingsStruct fromMap(Map<String, dynamic> data) => ListingsStruct(
         id: data['id'] as String?,
         created: data['created'] as String?,
         product: ProductStruct.maybeFromMap(data['product']),
         shop: data['shop'] as String?,
         uom: data['uom'] as String?,
-        price: castToType<double>(data['price']),
-        quantity: castToType<double>(data['quantity']),
         featured: data['featured'] as bool?,
-        discountedPrice: castToType<double>(data['discounted_price']),
         offerType: data['offer_type'] as String?,
         offerValue: castToType<int>(data['offer_value']),
+        quantity: castToType<int>(data['quantity']),
+        price: castToType<int>(data['price']),
+        discountedPrice: castToType<int>(data['discounted_price']),
       );
 
   static ListingsStruct? maybeFromMap(dynamic data) =>
@@ -126,12 +126,12 @@ class ListingsStruct extends BaseStruct {
         'product': _product?.toMap(),
         'shop': _shop,
         'uom': _uom,
-        'price': _price,
-        'quantity': _quantity,
         'featured': _featured,
-        'discounted_price': _discountedPrice,
         'offer_type': _offerType,
         'offer_value': _offerValue,
+        'quantity': _quantity,
+        'price': _price,
+        'discounted_price': _discountedPrice,
       }.withoutNulls;
 
   @override
@@ -156,21 +156,9 @@ class ListingsStruct extends BaseStruct {
           _uom,
           ParamType.String,
         ),
-        'price': serializeParam(
-          _price,
-          ParamType.double,
-        ),
-        'quantity': serializeParam(
-          _quantity,
-          ParamType.double,
-        ),
         'featured': serializeParam(
           _featured,
           ParamType.bool,
-        ),
-        'discounted_price': serializeParam(
-          _discountedPrice,
-          ParamType.double,
         ),
         'offer_type': serializeParam(
           _offerType,
@@ -178,6 +166,18 @@ class ListingsStruct extends BaseStruct {
         ),
         'offer_value': serializeParam(
           _offerValue,
+          ParamType.int,
+        ),
+        'quantity': serializeParam(
+          _quantity,
+          ParamType.int,
+        ),
+        'price': serializeParam(
+          _price,
+          ParamType.int,
+        ),
+        'discounted_price': serializeParam(
+          _discountedPrice,
           ParamType.int,
         ),
       }.withoutNulls;
@@ -210,24 +210,9 @@ class ListingsStruct extends BaseStruct {
           ParamType.String,
           false,
         ),
-        price: deserializeParam(
-          data['price'],
-          ParamType.double,
-          false,
-        ),
-        quantity: deserializeParam(
-          data['quantity'],
-          ParamType.double,
-          false,
-        ),
         featured: deserializeParam(
           data['featured'],
           ParamType.bool,
-          false,
-        ),
-        discountedPrice: deserializeParam(
-          data['discounted_price'],
-          ParamType.double,
           false,
         ),
         offerType: deserializeParam(
@@ -237,6 +222,21 @@ class ListingsStruct extends BaseStruct {
         ),
         offerValue: deserializeParam(
           data['offer_value'],
+          ParamType.int,
+          false,
+        ),
+        quantity: deserializeParam(
+          data['quantity'],
+          ParamType.int,
+          false,
+        ),
+        price: deserializeParam(
+          data['price'],
+          ParamType.int,
+          false,
+        ),
+        discountedPrice: deserializeParam(
+          data['discounted_price'],
           ParamType.int,
           false,
         ),
@@ -253,12 +253,12 @@ class ListingsStruct extends BaseStruct {
         product == other.product &&
         shop == other.shop &&
         uom == other.uom &&
-        price == other.price &&
-        quantity == other.quantity &&
         featured == other.featured &&
-        discountedPrice == other.discountedPrice &&
         offerType == other.offerType &&
-        offerValue == other.offerValue;
+        offerValue == other.offerValue &&
+        quantity == other.quantity &&
+        price == other.price &&
+        discountedPrice == other.discountedPrice;
   }
 
   @override
@@ -268,12 +268,12 @@ class ListingsStruct extends BaseStruct {
         product,
         shop,
         uom,
-        price,
-        quantity,
         featured,
-        discountedPrice,
         offerType,
-        offerValue
+        offerValue,
+        quantity,
+        price,
+        discountedPrice
       ]);
 }
 
@@ -283,12 +283,12 @@ ListingsStruct createListingsStruct({
   ProductStruct? product,
   String? shop,
   String? uom,
-  double? price,
-  double? quantity,
   bool? featured,
-  double? discountedPrice,
   String? offerType,
   int? offerValue,
+  int? quantity,
+  int? price,
+  int? discountedPrice,
 }) =>
     ListingsStruct(
       id: id,
@@ -296,10 +296,10 @@ ListingsStruct createListingsStruct({
       product: product ?? ProductStruct(),
       shop: shop,
       uom: uom,
-      price: price,
-      quantity: quantity,
       featured: featured,
-      discountedPrice: discountedPrice,
       offerType: offerType,
       offerValue: offerValue,
+      quantity: quantity,
+      price: price,
+      discountedPrice: discountedPrice,
     );

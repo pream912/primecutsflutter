@@ -57,7 +57,7 @@ class _MyAppState extends State<MyApp> {
       ..listen((user) => _appStateNotifier.update(user));
 
     Future.delayed(
-      Duration(milliseconds: 1000),
+      Duration(milliseconds: isWeb ? 0 : 3000),
       () => _appStateNotifier.stopShowingSplashImage(),
     );
   }
@@ -78,6 +78,7 @@ class _MyAppState extends State<MyApp> {
       supportedLocales: const [Locale('en', '')],
       theme: ThemeData(
         brightness: Brightness.light,
+        useMaterial3: false,
       ),
       themeMode: _themeMode,
       routerConfig: _router,

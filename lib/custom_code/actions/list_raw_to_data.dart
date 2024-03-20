@@ -24,8 +24,8 @@ Future<List<ListingsStruct>?> listRawToData(String? rawList) async {
         String id = '';
         String shop = '';
         String uom = '';
-        double quantity = 0;
-        double price = 0;
+        int quantity = 0;
+        int price = 0;
         bool featured = false;
         late ProductStruct product;
 
